@@ -1,0 +1,5 @@
+- project: finalproject-tps
+- language: typescript, react, react-three-fiber
+- added: vertical glass-and-steel center separator at x = 0 colored #eef3f6 to match floor slabs, dividing west (BARAT) and east (TIMUR) elevator banks in BuildingScene.tsx.
+- added: dynamic floating billboard passenger count badge above 3D elevator cars inside BuildingScene.tsx when carrying passengers.
+- added: interactive, elegant glassmorphic float-overlay zoom in / zoom out controls on the 3D building canvas utilizing OrbitControls ref and a programmatic ZoomController in BuildingScene.tsx.
