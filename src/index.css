@@ -769,6 +769,32 @@ body:has(.app-shell-glass)::before {
   text-transform: capitalize;
 }
 
+.navbar-fullscreen-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 1px solid var(--glass-border);
+  border-radius: 9px;
+  background: rgba(18, 31, 49, 0.96);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-fullscreen-glass:hover {
+  border-color: var(--glass-border-bright);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.navbar-fullscreen-glass:active {
+  transform: translateY(0);
+}
+
 .navbar-status-dot-glass {
   width: 7px;
   height: 7px;
@@ -1462,6 +1488,218 @@ body:has(.app-shell-glass)::before {
 
 .footer-link-glass:hover {
   color: var(--text-secondary);
+}
+
+/* ==============================
+   DARK NEO-SKEUOMORPHISM OVERRIDES
+   ============================== */
+body:has(.app-shell-glass)::before {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.016) 1px, transparent 1px),
+    linear-gradient(135deg, #15191f 0%, #1b2028 50%, #12161c 100%);
+  background-size: 48px 48px, 48px 48px, auto;
+  opacity: 1;
+}
+
+.app-navbar-glass {
+  background: #202631;
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    9px 9px 18px rgba(0, 0, 0, 0.36),
+    -6px -6px 14px rgba(83, 97, 118, 0.22),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.navbar-logo-glass,
+.navbar-scenario-glass,
+.navbar-status-glass,
+.navbar-fullscreen-glass,
+.glass-btn-primary,
+.glass-btn-icon,
+.metric-card-glass,
+.zoom-btn {
+  box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.34),
+    -6px -6px 14px rgba(83, 97, 118, 0.2),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.navbar-logo-glass {
+  border-color: transparent;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #2a3443, #171d25);
+}
+
+.navbar-logo-glass svg,
+.navbar-scenario-glass strong {
+  color: #67b7dc;
+}
+
+.navbar-scenario-glass {
+  border-color: transparent;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #252d3a, #151a22);
+}
+
+.navbar-status-glass {
+  border-color: transparent;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #20342f, #111d1a);
+}
+
+.navbar-fullscreen-glass {
+  border-color: transparent;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #252d3a, #151a22);
+}
+
+.glass-panel,
+.scene-shell-glass {
+  border-color: transparent;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #252d39 0%, #202631 52%, #171d25 100%);
+  box-shadow:
+    16px 16px 32px rgba(0, 0, 0, 0.44),
+    -10px -10px 26px rgba(83, 97, 118, 0.2),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.glass-panel:hover {
+  box-shadow:
+    18px 18px 34px rgba(0, 0, 0, 0.48),
+    -10px -10px 26px rgba(91, 106, 129, 0.22),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-btn-primary {
+  border-color: transparent;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #255263, #17313c);
+  color: #8dd4ee;
+}
+
+.glass-btn-primary:hover {
+  background: linear-gradient(145deg, #2b6074, #1b3945);
+}
+
+.glass-btn-primary:active,
+.glass-btn-icon:active,
+.zoom-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 8px 8px 16px rgba(0, 0, 0, 0.42),
+    inset -6px -6px 14px rgba(91, 106, 129, 0.16);
+}
+
+.glass-btn-primary.running {
+  background: linear-gradient(145deg, #512a2a, #241212);
+}
+
+.glass-btn-icon,
+.zoom-btn {
+  border-color: transparent;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #28313f, #171d25);
+}
+
+.zoom-btn {
+  background: linear-gradient(145deg, #303b4d, #1a212b);
+}
+
+.glass-select-wrap select,
+.glass-input-number {
+  border-color: transparent;
+  border-radius: 15px;
+  background: #1d232d;
+  box-shadow:
+    inset 8px 8px 16px rgba(0, 0, 0, 0.36),
+    inset -6px -6px 14px rgba(83, 97, 118, 0.16);
+}
+
+.glass-field input[type="range"],
+.glass-slider-field input[type="range"] {
+  height: 10px;
+  background: #1d232d;
+  box-shadow:
+    inset 7px 7px 14px rgba(0, 0, 0, 0.36),
+    inset -5px -5px 12px rgba(83, 97, 118, 0.16);
+}
+
+.glass-field input[type="range"]::-webkit-slider-runnable-track {
+  height: 10px;
+  background: transparent;
+}
+
+.glass-field input[type="range"]::-webkit-slider-thumb,
+.glass-slider-field input[type="range"]::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -6px;
+  background: linear-gradient(145deg, #dcecf3, #8faabd);
+  border-color: rgba(103, 183, 220, 0.42);
+  box-shadow:
+    7px 7px 13px rgba(0, 0, 0, 0.38),
+    -4px -4px 10px rgba(105, 122, 148, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.metric-card-glass {
+  border-color: transparent;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #252d39, #171d25);
+}
+
+.metric-card-glass:hover {
+  background: linear-gradient(145deg, #2a3443, #1a212b);
+}
+
+.metric-icon-glass {
+  border-radius: 12px;
+  box-shadow:
+    5px 5px 10px rgba(0, 0, 0, 0.26),
+    -3px -3px 8px rgba(83, 97, 118, 0.18),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.progress-glass,
+.progress-bar-wrap-glass {
+  box-shadow:
+    inset 8px 8px 16px rgba(0, 0, 0, 0.36),
+    inset -6px -6px 14px rgba(83, 97, 118, 0.16);
+}
+
+.progress-glass {
+  border-color: transparent;
+  border-radius: 16px;
+  background: #1d232d;
+}
+
+.progress-bar-wrap-glass {
+  height: 10px;
+  background: #151a22;
+}
+
+.progress-bar-fill-glass {
+  background: linear-gradient(90deg, #67b7dc, #7d8fd6);
+}
+
+.metric-card-glass.c-cyan::before {
+  background: linear-gradient(180deg, #67b7dc, transparent);
+}
+
+.metric-icon-glass.c-cyan {
+  background: rgba(103, 183, 220, 0.16);
+  color: #67b7dc;
+}
+
+.glass-field input[type="range"]::-webkit-slider-thumb:hover,
+.glass-slider-field input[type="range"]::-webkit-slider-thumb:hover {
+  border-color: #67b7dc;
+}
+
+.app-footer-glass {
+  background: linear-gradient(180deg, #202631, #15191f);
 }
 
 /* ==============================

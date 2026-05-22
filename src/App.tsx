@@ -1,4 +1,5 @@
-import { Building2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Building2, Maximize2, Minimize2 } from 'lucide-react'
 import { ChartsPanel } from './components/dashboard/ChartsPanel'
 import { MetricsPanel } from './components/dashboard/MetricsPanel'
 import { ControlPanel } from './components/controls/ControlPanel'
@@ -8,9 +9,29 @@ import { useSimulation } from './hooks/useSimulation'
 
 function App() {
   const { config, state, durationSeconds, updateConfig, start, pause, reset, singleStep } = useSimulation()
+  const appShellRef = useRef<HTMLDivElement>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  useEffect(() => {
+    const syncFullscreenState = () => {
+      setIsFullscreen(document.fullscreenElement === appShellRef.current)
+    }
+
+    document.addEventListener('fullscreenchange', syncFullscreenState)
+    return () => document.removeEventListener('fullscreenchange', syncFullscreenState)
+  }, [])
+
+  const toggleFullscreen = async () => {
+    if (!document.fullscreenElement) {
+      await appShellRef.current?.requestFullscreen()
+      return
+    }
+
+    await document.exitFullscreen()
+  }
 
   return (
-    <div className="app-shell-glass">
+    <div className="app-shell-glass" ref={appShellRef}>
 
       {/* ─── NAVBAR ─── */}
       <nav className="app-navbar-glass">
@@ -35,6 +56,16 @@ function App() {
             {state.mode === 'running' ? 'Running' : state.mode === 'paused' ? 'Paused' : 'Ready'}
           </span>
         </div>
+
+        <button
+          className="navbar-fullscreen-glass"
+          type="button"
+          onClick={toggleFullscreen}
+          title={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
+          aria-label={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
+        >
+          {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+        </button>
       </nav>
 
       {/* ─── MAIN CONTENT ─── */}

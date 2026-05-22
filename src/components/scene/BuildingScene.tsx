@@ -76,7 +76,8 @@ export function BuildingScene({ elevators, waitingQueues }: BuildingSceneProps) 
       <Canvas camera={{ position: [5.7, 5.35, 12.3], fov: 34 }} shadows>
         <color attach="background" args={['#d7e4ed']} />
         <ambientLight intensity={0.82} />
-        <directionalLight position={[2.5, 8, 5]} intensity={1.55} castShadow />
+        <directionalLight position={[2.5, 8, 5]} intensity={1.25} castShadow />
+        <directionalLight position={[-4, 7, -9]} intensity={1.45} castShadow />
         <SceneContent elevators={elevators} waitingQueues={waitingQueues} />
         <OrbitControls ref={controlsRef} enablePan={true} minDistance={5.8} maxDistance={18} maxPolarAngle={Math.PI / 2.08} />
         <ZoomController controlsRef={controlsRef} onRegister={setZoomActions} />
@@ -118,32 +119,32 @@ function SceneContent({ elevators, waitingQueues }: BuildingSceneProps) {
 }
 
 function SglcFacade({ shellOpacity }: { shellOpacity: number }) {
-  const wallOpacity = Math.max(0.12, shellOpacity)
   const coreOpacity = Math.max(0.18, shellOpacity * 0.92)
   const frameOpacity = Math.max(0.18, shellOpacity * 0.84)
 
   return (
     <group>
-      <mesh position={[0, 3.1375, buildingBackZ]} receiveShadow>
-        <boxGeometry args={[8.7, 6.275, 0.22]} />
-        <meshStandardMaterial color="#eef3f6" roughness={0.42} transparent opacity={wallOpacity} depthWrite={false} />
+      {/* Solid Back Concrete Wall */}
+      <mesh position={[0, 3.45, buildingBackZ + 0.04]} receiveShadow>
+        <boxGeometry args={[8.7, 5.78, 0.08]} />
+        <meshStandardMaterial color="#eef3f6" roughness={0.42} transparent={false} opacity={1} depthWrite />
       </mesh>
-      <mesh position={[0, 3.1375, buildingCenterZ]} receiveShadow>
-        <boxGeometry args={[8.96, 6.275, buildingDepth]} />
-        <meshStandardMaterial color="#f6f8f8" roughness={0.5} transparent opacity={Math.max(0.08, wallOpacity * 0.18)} depthWrite={false} />
-      </mesh>
+      
+      {/* Detailed Facade Panels & Windows (placed at the back, facing outwards (+Z)) */}
+      <BackFacadeDetails />
+
       <SideWing x={-4.38} opacity={frameOpacity} />
       <SideWing x={4.38} opacity={frameOpacity} />
 
       {/* Center partition (Sekat Timur-Barat) */}
-      <group position={[0, 3.1375, buildingCenterZ]}>
-        {/* Glass Panel */}
-        <mesh castShadow receiveShadow>
-          <boxGeometry args={[0.02, 6.275, buildingDepth * 0.96]} />
+      <group position={[0, 3.4175, buildingCenterZ]}>
+        {/* Glass Panel — removed for fully transparent front */}
+        <mesh castShadow receiveShadow visible={false}>
+          <boxGeometry args={[0.02, 5.715, buildingDepth * 0.96]} />
           <meshStandardMaterial 
             color="#eef3f6" 
             transparent 
-            opacity={Math.max(0.22, shellOpacity * 0.46)} 
+            opacity={0} 
             roughness={0.1} 
             metalness={0.9} 
             depthWrite={false} 
@@ -151,19 +152,31 @@ function SglcFacade({ shellOpacity }: { shellOpacity: number }) {
         </mesh>
         {/* Front Metal Column Frame */}
         <mesh position={[0, 0, buildingDepth / 2 - 0.02]} castShadow>
-          <boxGeometry args={[0.04, 6.275, 0.04]} />
+          <boxGeometry args={[0.04, 5.715, 0.04]} />
           <meshStandardMaterial color="#eef3f6" transparent opacity={Math.max(0.42, shellOpacity)} depthWrite={false} />
         </mesh>
         {/* Back Metal Column Frame */}
         <mesh position={[0, 0, -buildingDepth / 2 + 0.02]} castShadow>
-          <boxGeometry args={[0.04, 6.275, 0.04]} />
+          <boxGeometry args={[0.04, 5.715, 0.04]} />
           <meshStandardMaterial color="#eef3f6" transparent opacity={Math.max(0.42, shellOpacity)} depthWrite={false} />
         </mesh>
       </group>
 
-      <TopCrown opacity={frameOpacity} />
+      <TopCrown />
       <SideColumn x={-sideColumnX} opacity={coreOpacity} />
       <SideColumn x={sideColumnX} opacity={coreOpacity} label="FT UGM" />
+      
+      {/* Ground Floor (Lantai 1) Structural Pillars ("Tiang-Tiang") - Back Side Only */}
+      {[-4.0, -2.4, -0.8, 0.8, 2.4, 4.0].map((x, idx) => (
+        <group key={`ground-pillar-${idx}`}>
+          {/* Back structural pillar */}
+          <mesh position={[x, 0.28, buildingBackZ + 0.06]} castShadow receiveShadow>
+            <boxGeometry args={[0.08, 0.56, 0.08]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.35} />
+          </mesh>
+        </group>
+      ))}
+
       <mesh position={[0, -0.34, buildingCenterZ]} receiveShadow>
         <boxGeometry args={[10.2, 0.68, 1.82]} />
         <meshStandardMaterial color="#374151" roughness={0.6} metalness={0.2} />
@@ -172,15 +185,167 @@ function SglcFacade({ shellOpacity }: { shellOpacity: number }) {
   )
 }
 
+function BackFacadeDetails() {
+  return (
+    <group position={[0, 3.1, buildingBackZ - 0.04]} rotation={[0, Math.PI, 0]}>
+      {/* 1. Horizontal White Spandrel Floor Bands for all 12 floor slab lines */}
+      {Array.from({ length: 12 }).map((_, f) => {
+        const y = f * floorStep - 3.1
+        return (
+          <mesh key={`back-slab-band-${f}`} position={[0, y, -0.01]} receiveShadow castShadow>
+            <boxGeometry args={[8.2, 0.07, 0.07]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.35} />
+          </mesh>
+        )
+      })}
+
+      {/* 2. Continuous Blue Glass Facade for center window bays (Bays 2, 3, 4) - Floors 2 to 10 (skip f = 0 for open ground floor) */}
+      <group position={[0, 0, -0.035]}>
+        {Array.from({ length: 10 }).map((_, f) => {
+          if (f === 0) return null
+          const y = f * floorStep - 3.1 + 0.28
+          return (
+            <group key={`win-center-f-${f}`} position={[0, y, 0]}>
+              {/* Render three central window groups at x = -1.6, 0, 1.6 */}
+              {[-1.6, 0, 1.6].map((xOffset) => (
+                <group key={`win-pane-${xOffset}`} position={[xOffset, 0, 0]}>
+                  {/* Glass Panel */}
+                  <mesh castShadow receiveShadow>
+                    <boxGeometry args={[1.5, 0.48, 0.02]} />
+                    <meshStandardMaterial 
+                      color="#ffffff" 
+                      roughness={0.2} 
+                      metalness={0.1} 
+                      transparent 
+                      opacity={0.3} 
+                    />
+                  </mesh>
+                  {/* Detailed structural white window frame grid: 2 vertical mullions, 1 horizontal transom */}
+                  {/* Horizontal Transom */}
+                  <mesh position={[0, 0, 0.011]} castShadow>
+                    <boxGeometry args={[1.48, 0.02, 0.02]} />
+                    <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                  </mesh>
+                  {/* Two Vertical Mullions */}
+                  {[-0.25, 0.25].map((mx) => (
+                    <mesh key={`mullion-${mx}`} position={[mx, 0, 0.012]} castShadow>
+                      <boxGeometry args={[0.02, 0.48, 0.02]} />
+                      <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                    </mesh>
+                  ))}
+                  {/* Outer dark grey window borders for contrast */}
+                  <mesh position={[-0.74, 0, 0.01]}>
+                    <boxGeometry args={[0.015, 0.48, 0.018]} />
+                    <meshStandardMaterial color="#374151" roughness={0.5} />
+                  </mesh>
+                  <mesh position={[0.74, 0, 0.01]}>
+                    <boxGeometry args={[0.015, 0.48, 0.018]} />
+                    <meshStandardMaterial color="#374151" roughness={0.5} />
+                  </mesh>
+                </group>
+              ))}
+            </group>
+          )
+        })}
+      </group>
+
+      {/* 3. Outer white panel bays with horizontal siding slats and small windows (Bays 1 and 5 at x = -3.2 and 3.2, skip f = 0 for open ground floor) */}
+      {[-3.2, 3.2].map((xOffset) => (
+        <group key={`outer-bay-${xOffset}`} position={[xOffset, 0, -0.035]}>
+          {Array.from({ length: 10 }).map((_, f) => {
+            if (f === 0) return null
+            const y = f * floorStep - 3.1 + 0.28
+            const isLeftBay = xOffset < 0
+            const winLocalX = isLeftBay ? 0.38 : -0.38
+            
+            return (
+              <group key={`outer-panel-f-${f}`} position={[0, y, 0]}>
+                {/* White Background Panel */}
+                <mesh castShadow receiveShadow>
+                  <boxGeometry args={[1.5, 0.48, 0.02]} />
+                  <meshStandardMaterial color="#ffffff" roughness={0.45} />
+                </mesh>
+                
+                {/* 4 horizontal thin lines/slats across the white panel for realistic siding texture */}
+                {Array.from({ length: 4 }).map((_, s) => {
+                  const slatLocalY = (s - 1.5) * 0.11
+                  return (
+                    <mesh key={`siding-slat-${s}`} position={[0, slatLocalY, 0.011]} castShadow>
+                      <boxGeometry args={[1.5, 0.014, 0.008]} />
+                      <meshStandardMaterial color="#d1d5db" roughness={0.5} />
+                    </mesh>
+                  )
+                })}
+
+                {/* Small detailed window opening */}
+                <group position={[winLocalX, 0, 0.012]}>
+                  {/* Small Glass Window */}
+                  <mesh castShadow receiveShadow>
+                    <boxGeometry args={[0.48, 0.34, 0.015]} />
+                    <meshStandardMaterial 
+                      color="#ffffff" 
+                      roughness={0.2} 
+                      metalness={0.1} 
+                      transparent 
+                      opacity={0.3} 
+                    />
+                  </mesh>
+                  {/* Small Window White Frame */}
+                  <mesh position={[0, 0, 0.002]} receiveShadow>
+                    <boxGeometry args={[0.52, 0.38, 0.01]} />
+                    <meshStandardMaterial color="#ffffff" roughness={0.35} />
+                  </mesh>
+                  {/* Small Window Inner Dark Frame */}
+                  <mesh position={[0, 0, 0.005]}>
+                    <boxGeometry args={[0.49, 0.35, 0.008]} />
+                    <meshStandardMaterial color="#4b5563" roughness={0.5} />
+                  </mesh>
+                </group>
+              </group>
+            )
+          })}
+        </group>
+      ))}
+
+      {/* 4. Structural vertical divide columns/piers (floors 1 to 9) at x = [-4.0, -2.4, -0.8, 0.8, 2.4, 4.0] */}
+      {[-4.0, -2.4, -0.8, 0.8, 2.4, 4.0].map((x, idx) => {
+        const height = 9 * floorStep // 5.04
+        const y = -0.02
+        return (
+          <mesh key={`divider-fin-${idx}`} position={[x, y, 0.02]} castShadow receiveShadow>
+            <boxGeometry args={[0.07, height - 0.02, 0.09]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.35} />
+          </mesh>
+        )
+      })}
+
+      {/* 5. Top section (Floor 11 only) - dense vertical architectural fins */}
+      <group position={[0, 0, -0.035]}>
+        {/* Dense vertical white fins (30 fins) mirroring the beautiful sunshades on SGLC building */}
+        {Array.from({ length: 30 }).map((_, index) => {
+          const x = -3.85 + index * 0.265
+          return (
+            <mesh key={`top-fin-${index}`} position={[x, 2.78, 0.035]} castShadow receiveShadow>
+              <boxGeometry args={[0.045, 0.50, 0.07]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.35} />
+            </mesh>
+          )
+        })}
+      </group>
+    </group>
+  )
+}
+
 function SideWing({ x, opacity }: { x: number; opacity: number }) {
   return (
-    <group position={[x, 3.1375, buildingCenterZ]}>
-      <mesh receiveShadow>
-        <boxGeometry args={[0.26, 6.275, buildingDepth]} />
-        <meshStandardMaterial color="#f4f6f6" roughness={0.5} transparent opacity={opacity} depthWrite={false} />
+    <group position={[x, 3.4175, buildingCenterZ]}>
+      {/* Glass body removed — fully transparent front facade */}
+      <mesh receiveShadow visible={false}>
+        <boxGeometry args={[0.26, 5.715, buildingDepth]} />
+        <meshStandardMaterial color="#f4f6f6" roughness={0.5} transparent opacity={0} depthWrite={false} />
       </mesh>
       <mesh position={[x > 0 ? -0.22 : 0.22, -0.175, buildingFrontZ - buildingCenterZ + 0.02]}>
-        <boxGeometry args={[0.08, 5.925, 0.07]} />
+        <boxGeometry args={[0.08, 5.365, 0.07]} />
         <meshStandardMaterial color="#dfe4e6" roughness={0.46} transparent opacity={Math.max(0.16, opacity * 0.7)} depthWrite={false} />
       </mesh>
     </group>
@@ -196,27 +361,69 @@ function FloorSlabs({ shellOpacity }: { shellOpacity: number }) {
         const y = slabY(index)
         const isFloor1 = index === 0
 
+        // Skip top slab — TopCrown already provides the roof beam
+        if (index === maxFloor) return null
+
         return (
         <group key={index} position={[0, y, buildingCenterZ]}>
-          <mesh receiveShadow>
-            <boxGeometry args={[8.72, 0.04, buildingDepth * 0.94]} />
-            <meshStandardMaterial 
-              color="#eef3f6" 
-              roughness={0.5} 
-              transparent={!isFloor1} 
-              opacity={isFloor1 ? 1 : opacity} 
-              depthWrite={isFloor1} 
-            />
-          </mesh>
+          {/* Main slab */}
+          {isFloor1 ? (
+            <group>
+              {/* Left Wing (West Bank Support) */}
+              <mesh position={[-2.78, 0, 0]} receiveShadow>
+                <boxGeometry args={[3.16, 0.04, buildingDepth * 0.94]} />
+                <meshStandardMaterial 
+                  color="#eef3f6" 
+                  roughness={0.5} 
+                  transparent 
+                  opacity={0.88} 
+                  depthWrite 
+                />
+              </mesh>
+              {/* Right Wing (East Bank Support) */}
+              <mesh position={[2.78, 0, 0]} receiveShadow>
+                <boxGeometry args={[3.16, 0.04, buildingDepth * 0.94]} />
+                <meshStandardMaterial 
+                  color="#eef3f6" 
+                  roughness={0.5} 
+                  transparent 
+                  opacity={0.88} 
+                  depthWrite 
+                />
+              </mesh>
+              {/* Connecting Walkway at the back */}
+              <mesh position={[0, 0, -buildingDepth * 0.32]} receiveShadow>
+                <boxGeometry args={[2.4, 0.04, buildingDepth * 0.3]} />
+                <meshStandardMaterial 
+                  color="#eef3f6" 
+                  roughness={0.5} 
+                  transparent 
+                  opacity={0.88} 
+                  depthWrite 
+                />
+              </mesh>
+            </group>
+          ) : (
+            <mesh receiveShadow>
+              <boxGeometry args={[8.72, 0.04, buildingDepth * 0.94]} />
+              <meshStandardMaterial 
+                color="#eef3f6" 
+                roughness={0.5} 
+                transparent={!isFloor1} 
+                opacity={isFloor1 ? 1 : 0.55} 
+                depthWrite={isFloor1} 
+              />
+            </mesh>
+          )}
+          {/* Front horizontal white band */}
           <mesh position={[0, 0.025, buildingFrontZ - buildingCenterZ + 0.03]}>
             <boxGeometry args={[8.72, 0.045, 0.045]} />
-            <meshStandardMaterial 
-              color="#ffffff" 
-              roughness={0.46} 
-              transparent={!isFloor1} 
-              opacity={isFloor1 ? 1 : Math.min(0.72, opacity + 0.18)} 
-              depthWrite={isFloor1} 
-            />
+            <meshStandardMaterial color="#ffffff" roughness={0.46} transparent={false} opacity={1} depthWrite />
+          </mesh>
+          {/* Back horizontal white band */}
+          <mesh position={[0, 0.025, buildingBackZ - buildingCenterZ - 0.03]}>
+            <boxGeometry args={[8.72, 0.045, 0.045]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.46} transparent={false} opacity={1} depthWrite />
           </mesh>
         </group>
         )
@@ -225,17 +432,60 @@ function FloorSlabs({ shellOpacity }: { shellOpacity: number }) {
   )
 }
 
-function TopCrown({ opacity }: { opacity: number }) {
+function TopCrown() {
   return (
     <group position={[0, 10 * floorStep + 0.5, buildingCenterZ]}>
-      <mesh position={[0, 0.08, 0]}>
-        <boxGeometry args={[8.7, 0.38, buildingDepth]} />
-        <meshStandardMaterial color="#f7f8f7" roughness={0.52} transparent opacity={opacity} depthWrite={false} />
+      {/* Main slab */}
+      <mesh position={[0, 0.15, 0]}>
+        <boxGeometry args={[8.7, 0.18, buildingDepth]} />
+        <meshStandardMaterial color="#f7f8f7" roughness={0.52} transparent={false} opacity={1} depthWrite />
       </mesh>
-      <mesh position={[1.34, 0.42, -0.12]}>
+      
+      {/* Elevator motor room / penthouse structure */}
+      <mesh position={[1.34, 0.52, -0.12]}>
         <boxGeometry args={[0.64, 0.26, 0.78]} />
-        <meshStandardMaterial color="#e9eeee" roughness={0.5} transparent opacity={Math.max(0.18, opacity * 0.82)} depthWrite={false} />
+        <meshStandardMaterial color="#e9eeee" roughness={0.5} transparent={false} opacity={1} depthWrite />
       </mesh>
+
+      {/* Elegant Architectural Roof Pergola Frame (Sunshade Beams) */}
+      <group position={[0, 0.37, 0]}>
+        {/* Long horizontal front and back beams */}
+        <mesh position={[0, 0.12, buildingDepth / 2 - 0.08]} castShadow>
+          <boxGeometry args={[8.5, 0.06, 0.06]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.35} />
+        </mesh>
+        <mesh position={[0, 0.12, -buildingDepth / 2 + 0.08]} castShadow>
+          <boxGeometry args={[8.5, 0.06, 0.06]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.35} />
+        </mesh>
+        
+        {/* Vertical columns/posts supporting the pergola */}
+        {[-4.0, -2.8, -1.6, -0.4, 0.8, 2.0, 3.2, 4.0].map((xVal, pIdx) => (
+          <group key={`pergola-post-${pIdx}`} position={[xVal, 0.03, 0]}>
+            {/* Front Post */}
+            <mesh position={[0, 0, buildingDepth / 2 - 0.08]} castShadow>
+              <boxGeometry args={[0.05, 0.18, 0.05]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.35} />
+            </mesh>
+            {/* Back Post */}
+            <mesh position={[0, 0, -buildingDepth / 2 + 0.08]} castShadow>
+              <boxGeometry args={[0.05, 0.18, 0.05]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.35} />
+            </mesh>
+          </group>
+        ))}
+
+        {/* Transverse thin louvre slats across the roof pergola (14 slats) */}
+        {Array.from({ length: 14 }).map((_, sIdx) => {
+          const xVal = -4.1 + sIdx * 0.63
+          return (
+            <mesh key={`roof-slat-${sIdx}`} position={[xVal, 0.15, 0]} castShadow>
+              <boxGeometry args={[0.04, 0.02, buildingDepth - 0.14]} />
+              <meshStandardMaterial color="#e5e7eb" roughness={0.4} />
+            </mesh>
+          )
+        })}
+      </group>
     </group>
   )
 }
@@ -246,21 +496,30 @@ function SideColumn({ x, label }: { x: number; opacity: number; label?: string }
 
   return (
     <group position={[x, 2.8, buildingCenterZ]}>
-      {/* Main concrete column */}
-      <mesh position={[0, 0.395, 0]} castShadow>
-        <boxGeometry args={[0.62, 6.39, buildingDepth * 0.72]} />
-        <meshStandardMaterial color="#f2f4f4" roughness={0.48} metalness={0.1} />
+      {/* Main concrete column - split into stone-grey base (L1 & L2) and white upper structure */}
+      {/* Base (L1 & L2) - grey stone */}
+      <mesh position={[0, -2.24, 0]} castShadow>
+        <boxGeometry args={[0.62, 1.12, buildingDepth * 0.72]} />
+        <meshStandardMaterial color="#6b7280" roughness={0.76} metalness={0.06} />
+      </mesh>
+      {/* Upper (L3 to L11) - white concrete */}
+      <mesh position={[0, 0.955, 0]} castShadow>
+        <boxGeometry args={[0.62, 5.27, buildingDepth * 0.72]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
       
-      {/* Blue window strip next to the column */}
-      <mesh position={[x > 0 ? -0.23 : 0.23, 0.2375, buildingFrontZ - buildingCenterZ - 0.02]}>
-        <boxGeometry args={[0.16, 6.075, 0.12]} />
+      {/* Exterior blue panel — covers side gap, exterior facing only */}
+      <mesh position={[x > 0 ? -0.315 : 0.315, 0.275, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+        <planeGeometry args={[buildingDepth, 6.0]} />
         <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
       </mesh>
 
       {/* Horizontal white accent bands (ribs) wrapping around the column at each floor level */}
       {Array.from({ length: 12 }).map((_, index) => {
         const localY = index * floorStep - 2.8
+        // No white bands for Floors 1 and 2 (index 0, 1, and 2)
+        if (index < 3) return null
+
         return (
           <mesh key={index} position={[x > 0 ? 0.02 : -0.02, localY, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.66, 0.042, buildingDepth * 0.72 + 0.04]} />
@@ -275,18 +534,20 @@ function SideColumn({ x, label }: { x: number; opacity: number; label?: string }
             const panelIndex = 10 - index
             const localY = (panelIndex + 0.5) * floorStep - 2.8
             return (
-              <Text
-                key={`${letter}-${index}`}
-                position={[labelSide, localY, 0.08]}
-                rotation={[0, labelRotation, 0]}
-                fontSize={0.28}
-                fontWeight="bold"
-                color="#1e3a8a"
-                anchorX="center"
-                anchorY="middle"
-              >
-                {letter}
-              </Text>
+              <group key={`${letter}-${index}`}>
+                {/* Main side label (facing outwards) */}
+                <Text
+                  position={[labelSide, localY, 0.08]}
+                  rotation={[0, labelRotation, 0]}
+                  fontSize={0.32}
+                  fontWeight="bold"
+                  color="#1e3a8a"
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  {letter}
+                </Text>
+              </group>
             )
           })
         : null}
@@ -315,26 +576,25 @@ function ElevatorSystem({ elevators, waitingQueues }: BuildingSceneProps) {
 function BankGuide({ x, label }: { x: number; label: string }) {
   const displayColor = label === 'BARAT' ? '#c2410c' : '#0f766e'
   return (
-    <group>
+    <Billboard position={[x, 11 * floorStep + 1.0, buildingFrontZ + 0.05]} renderOrder={simulationRenderOrder + 10}>
       <Text
-        position={[x, 11 * floorStep + 0.66, buildingFrontZ + 0.05]}
-        fontSize={0.17}
+        fontSize={0.38}
         fontWeight="bold"
         color={displayColor}
         anchorX="center"
-        renderOrder={simulationRenderOrder + 10}
-        material-depthTest={false}
+        material-depthTest
         material-depthWrite={false}
       >
         {label}
       </Text>
-    </group>
+    </Billboard>
   )
 }
 
 function ElevatorShaft({ elevator, layout }: { elevator: Elevator; layout: ShaftLayout }) {
   const labelColor = elevator.bank === 'west' ? '#7c2d12' : '#115e59'
   const displayLabel = elevator.label.split(' ').pop() ?? elevator.label
+  const labelX = layout.x + (elevator.id.endsWith('N') ? -0.12 : 0.12)
 
   return (
     <group renderOrder={simulationRenderOrder}>
@@ -342,21 +602,23 @@ function ElevatorShaft({ elevator, layout }: { elevator: Elevator; layout: Shaft
         <boxGeometry args={[0.42, 6.2, 0.2]} />
         <meshStandardMaterial color="#132137" transparent opacity={0.92} metalness={0.2} roughness={0.35} depthWrite={false} />
       </mesh>
-      {elevator.servedFloors.map((floor) => (
-        <FloorServiceMarker key={`${elevator.id}-${floor}`} floor={floor} layout={layout} />
-      ))}
-      <Text
-        position={[layout.x, 11 * floorStep + 0.32, buildingFrontZ + 0.05]}
-        fontSize={0.12}
-        fontWeight="bold"
-        color={labelColor}
-        anchorX="center"
-        renderOrder={simulationRenderOrder + 10}
-        material-depthTest={false}
-        material-depthWrite={false}
-      >
-        {displayLabel}
-      </Text>
+      {elevator.servedFloors.map((floor) =>
+        floor === maxFloor ? null : (
+          <FloorServiceMarker key={`${elevator.id}-${floor}`} floor={floor} layout={layout} />
+        )
+      )}
+      <Billboard position={[labelX, 11 * floorStep + 0.65, buildingFrontZ + 0.05]} renderOrder={simulationRenderOrder + 10}>
+        <Text
+          fontSize={0.23}
+          fontWeight="bold"
+          color={labelColor}
+          anchorX="center"
+          material-depthTest
+          material-depthWrite={false}
+        >
+          {displayLabel}
+        </Text>
+      </Billboard>
       <ElevatorCar elevator={elevator} layout={layout} />
     </group>
   )
@@ -411,13 +673,13 @@ function ElevatorCar({ elevator, layout }: { elevator: Elevator; layout: ShaftLa
           <group renderOrder={passengerRenderOrder + 10}>
             {/* Background circular badge */}
             <mesh renderOrder={passengerRenderOrder + 10}>
-              <circleGeometry args={[0.12, 16]} />
+              <circleGeometry args={[0.13, 16]} />
               <meshBasicMaterial color="#ef4444" transparent={true} opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
             </mesh>
             {/* Passenger Count Text */}
             <Text
               position={[0, 0, 0.01]}
-              fontSize={0.15}
+              fontSize={0.16}
               fontWeight="bold"
               color="#ffffff"
               anchorX="center"
@@ -497,7 +759,7 @@ function QueueDots({
             {count ? (
               <Text
                 position={[labelX, 0.11, 0.02]}
-                fontSize={0.18}
+                fontSize={0.20}
                 fontWeight="bold"
                 color={passengerColor}
                 anchorX={labelAnchor}
@@ -519,19 +781,22 @@ function FloorLabels() {
   return (
     <group>
       {Array.from({ length: maxFloor }, (_, index) => index + 1).map((floor) => (
-        <Text
+        <Billboard
           key={floor}
-          position={[-5.34, floorY(floor), buildingFrontZ]}
-          fontSize={0.16}
-          fontWeight="bold"
-          color={floor === 2 || floor === 3 ? '#7e8b98' : '#0b1626'}
-          anchorX="center"
+          position={[-5.34, floorY(floor), buildingFrontZ + 0.05]}
           renderOrder={simulationRenderOrder}
-          material-depthTest={false}
-          material-depthWrite={false}
         >
-          L{floor}
-        </Text>
+          <Text
+            fontSize={0.28}
+            fontWeight="bold"
+            color={floor === 2 || floor === 3 ? '#7e8b98' : '#0b1626'}
+            anchorX="center"
+            material-depthTest={true}
+            material-depthWrite={false}
+          >
+            L{floor}
+          </Text>
+        </Billboard>
       ))}
     </group>
   )
