@@ -516,8 +516,8 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
       </mesh>
       
       {/* Exterior blue panel — covers side gap, exterior facing only */}
-      <mesh position={[x > 0 ? -0.315 : 0.315, 0.955, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
-        <planeGeometry args={[buildingDepth, 5.27]} />
+      <mesh position={[x > 0 ? -0.315 : 0.315, 0.275, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+        <planeGeometry args={[buildingDepth, 6.0]} />
         <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
       </mesh>
 
@@ -682,6 +682,12 @@ function ElevatorCar({ elevator, layout }: { elevator: Elevator; layout: ShaftLa
       <mesh castShadow renderOrder={elevatorRenderOrder}>
         <boxGeometry args={[0.58, 0.5, 0.52]} />
         <meshStandardMaterial color="#2563eb" metalness={0.3} roughness={0.2} />
+      </mesh>
+      
+      {/* Dark Interior Background (visible when doors open) */}
+      <mesh position={[0, 0, 0.258]} renderOrder={elevatorRenderOrder + 0.5}>
+        <boxGeometry args={[0.45, 0.35, 0.01]} />
+        <meshStandardMaterial color="#111827" roughness={0.8} />
       </mesh>
       
       {/* Animated Left Door Panel */}
