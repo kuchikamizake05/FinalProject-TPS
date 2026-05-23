@@ -411,13 +411,13 @@ function TopCrown() {
       </mesh>
       
       {/* Elevator motor room / penthouse structure */}
-      <mesh position={[1.34, 0.52, -0.12]}>
+      <mesh position={[1.34, 0.37, -0.12]}>
         <boxGeometry args={[0.64, 0.26, 0.78]} />
         <meshStandardMaterial color="#e9eeee" roughness={0.5} transparent={false} opacity={1} depthWrite />
       </mesh>
 
       {/* Elegant Architectural Roof Pergola Frame (Sunshade Beams) */}
-      <group position={[0, 0.37, 0]}>
+      <group position={[0, 0.30, 0]}>
         {/* Long horizontal front and back beams */}
         <mesh position={[0, 0.12, buildingDepth / 2 - 0.08]} castShadow>
           <boxGeometry args={[8.5, 0.06, 0.06]} />
