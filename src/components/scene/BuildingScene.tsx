@@ -111,7 +111,7 @@ function SceneContent({ elevators, waitingQueues }: BuildingSceneProps) {
   return (
     <group position={[0, -3.05, 0]}>
       <SglcFacade shellOpacity={shellOpacity} />
-      <FloorSlabs shellOpacity={shellOpacity} />
+      <FloorSlabs />
       <ElevatorSystem elevators={elevators} waitingQueues={waitingQueues} />
       <FloorLabels />
     </group>
@@ -119,7 +119,6 @@ function SceneContent({ elevators, waitingQueues }: BuildingSceneProps) {
 }
 
 function SglcFacade({ shellOpacity }: { shellOpacity: number }) {
-  const coreOpacity = Math.max(0.18, shellOpacity * 0.92)
   const frameOpacity = Math.max(0.18, shellOpacity * 0.84)
 
   return (
@@ -163,8 +162,8 @@ function SglcFacade({ shellOpacity }: { shellOpacity: number }) {
       </group>
 
       <TopCrown />
-      <SideColumn x={-sideColumnX} opacity={coreOpacity} />
-      <SideColumn x={sideColumnX} opacity={coreOpacity} label="FT UGM" />
+      <SideColumn x={-sideColumnX} />
+      <SideColumn x={sideColumnX} label="FT UGM" />
       
       {/* Ground Floor (Lantai 1) Structural Pillars ("Tiang-Tiang") - Back Side Only */}
       {[-4.0, -2.4, -0.8, 0.8, 2.4, 4.0].map((x, idx) => (
@@ -352,9 +351,7 @@ function SideWing({ x, opacity }: { x: number; opacity: number }) {
   )
 }
 
-function FloorSlabs({ shellOpacity }: { shellOpacity: number }) {
-  const opacity = Math.max(0.2, shellOpacity * 0.95)
-
+function FloorSlabs() {
   return (
     <group>
       {Array.from({ length: maxFloor + 1 }, (_, index) => index).map((index) => {
@@ -490,7 +487,7 @@ function TopCrown() {
   )
 }
 
-function SideColumn({ x, label }: { x: number; opacity: number; label?: string }) {
+function SideColumn({ x, label }: { x: number; label?: string }) {
   const labelSide = x > 0 ? 0.34 : -0.34
   const labelRotation = x > 0 ? Math.PI / 2 : -Math.PI / 2
 

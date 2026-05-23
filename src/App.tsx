@@ -107,16 +107,6 @@ function App() {
 
       </main>
 
-      <footer className="app-footer-glass">
-        <div className="footer-brand-glass">
-          <Building2 size={13} />
-          <span>Simulasi Lift SGLC</span>
-          <div className="footer-dot-glass" />
-          <span>TPS Final Project</span>
-        </div>
-
-      </footer>
-
     </div>
   )
 }
