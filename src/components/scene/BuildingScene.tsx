@@ -682,27 +682,31 @@ function ElevatorShaft({ elevator, layout }: { elevator: Elevator; layout: Shaft
 }
 
 function FloorServiceMarker({ floor, layout }: { floor: number; layout: ShaftLayout }) {
+  const markerHeight = 0.36
+  const markerWidth = 0.46
+  const markerDepth = 0.28
+
   return (
     <group position={[layout.x, floorY(floor), layout.z]} renderOrder={simulationRenderOrder + 2}>
       <mesh position={[0, 0, 0.13]} renderOrder={simulationRenderOrder + 2}>
-        <boxGeometry args={[0.52, 0.52, 0.045]} />
-        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.28} transparent opacity={0.46} depthWrite={false} />
+        <boxGeometry args={[markerWidth, markerHeight, 0.035]} />
+        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.22} transparent opacity={0.42} depthWrite={false} />
       </mesh>
       <mesh position={[0, 0, -0.13]} renderOrder={simulationRenderOrder + 2}>
-        <boxGeometry args={[0.52, 0.52, 0.045]} />
-        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.22} transparent opacity={0.34} depthWrite={false} />
+        <boxGeometry args={[markerWidth, markerHeight, 0.035]} />
+        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.18} transparent opacity={0.28} depthWrite={false} />
       </mesh>
-      <mesh position={[0.255, 0, 0]} renderOrder={simulationRenderOrder + 2}>
-        <boxGeometry args={[0.045, 0.52, 0.34]} />
-        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.22} transparent opacity={0.38} depthWrite={false} />
+      <mesh position={[0.225, 0, 0]} renderOrder={simulationRenderOrder + 2}>
+        <boxGeometry args={[0.035, markerHeight, markerDepth]} />
+        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.18} transparent opacity={0.32} depthWrite={false} />
       </mesh>
-      <mesh position={[-0.255, 0, 0]} renderOrder={simulationRenderOrder + 2}>
-        <boxGeometry args={[0.045, 0.52, 0.34]} />
-        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.22} transparent opacity={0.38} depthWrite={false} />
+      <mesh position={[-0.225, 0, 0]} renderOrder={simulationRenderOrder + 2}>
+        <boxGeometry args={[0.035, markerHeight, markerDepth]} />
+        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.18} transparent opacity={0.32} depthWrite={false} />
       </mesh>
       <mesh position={[0, 0, 0.185]} renderOrder={simulationRenderOrder + 3}>
-        <boxGeometry args={[0.46, 0.42, 0.035]} />
-        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.42} transparent opacity={0.64} depthWrite={false} />
+        <boxGeometry args={[0.38, markerHeight - 0.08, 0.03]} />
+        <meshStandardMaterial color={layout.color} emissive={layout.color} emissiveIntensity={0.34} transparent opacity={0.52} depthWrite={false} />
       </mesh>
     </group>
   )
