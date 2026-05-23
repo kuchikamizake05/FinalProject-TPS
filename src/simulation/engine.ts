@@ -157,24 +157,37 @@ export function stepSimulation(previous: SimulationState, config: SimulationConf
   const completedPassengers = [...state.completedPassengers]
 
   const elevators = state.elevators.map((elevator) => {
-    if (elevator.doorTimer > 0) {
+    let currentElevator = { ...elevator }
+
+    // Algoritma Standby (Home Floor): Kembali ke Lantai 1 jika kosong & idle pada Jam Masuk Pagi
+    if (
+      config.scenario === 'morning' &&
+      currentElevator.targetFloors.length === 0 &&
+      currentElevator.passengers.length === 0 &&
+      (state.waitingQueues[currentElevator.id]?.length ?? 0) === 0 &&
+      Math.abs(currentElevator.currentFloor - 1) > 0.01
+    ) {
+      currentElevator.targetFloors = [1]
+    }
+
+    if (currentElevator.doorTimer > 0) {
       return {
-        ...elevator,
-        doorTimer: elevator.doorTimer - 1,
+        ...currentElevator,
+        doorTimer: currentElevator.doorTimer - 1,
         status: 'boarding' as const,
-        busyTime: elevator.busyTime + 1,
+        busyTime: currentElevator.busyTime + 1,
       }
     }
 
-    const hasArrived = elevator.targetFloors.some((floor) => Math.abs(floor - elevator.currentFloor) < 0.01)
+    const hasArrived = currentElevator.targetFloors.some((floor) => Math.abs(floor - currentElevator.currentFloor) < 0.01)
     if (hasArrived) {
-      const stopped = processStop(elevator, waitingQueues[elevator.id] ?? [], state.time, config)
-      waitingQueues[elevator.id] = stopped.waitingQueue
+      const stopped = processStop(currentElevator, waitingQueues[currentElevator.id] ?? [], state.time, config)
+      waitingQueues[currentElevator.id] = stopped.waitingQueue
       completedPassengers.push(...stopped.completed)
       return stopped.elevator
     }
 
-    return moveElevator(elevator, config)
+    return moveElevator(currentElevator, config)
   })
 
   const nextState = {
