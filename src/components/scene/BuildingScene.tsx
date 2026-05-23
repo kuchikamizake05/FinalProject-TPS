@@ -488,27 +488,39 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
           <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
         </mesh>
 
-        {/* 2. Right Side in View / Back Half (Z < 0): Beautiful horizontal window column */}
-        {/* Bright sky-blue reflective glass pane */}
-        <mesh position={[panelX, panelY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-          <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
-          <meshStandardMaterial color="#0ea5e9" roughness={0.05} metalness={0.9} transparent opacity={0.85} />
-        </mesh>
+        {/* 2. Right Side in View / Back Half (Z < 0): Beautiful horizontal window column for x > 0 OR Solid Blue for x < 0 */}
+        {x > 0 ? (
+          // Glass window pane for the right column
+          <mesh position={[panelX, panelY, -buildingDepth / 4]} rotation={[0, Math.PI / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
+            <meshStandardMaterial color="#0ea5e9" roughness={0.05} metalness={0.9} transparent opacity={0.85} />
+          </mesh>
+        ) : (
+          // Solid blue panel for the left column
+          <mesh position={[panelX, panelY, -buildingDepth / 4]} rotation={[0, -Math.PI / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
+            <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
+          </mesh>
+        )}
 
-        {/* Back and middle vertical white frames for the window column */}
-        {/* Back vertical border/fin (Z = -buildingDepth/2) */}
-        <mesh position={[x > 0 ? -0.37 : 0.37, panelY, -buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
-          <boxGeometry args={[0.08, panelHeight, 0.12]} />
-          <meshStandardMaterial color="#ffffff" roughness={0.4} />
-        </mesh>
-        {/* Middle vertical frame (Z = 0) */}
-        <mesh position={[x > 0 ? -0.34 : 0.34, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
-          <boxGeometry args={[0.04, panelHeight, 0.06]} />
-          <meshStandardMaterial color="#ffffff" roughness={0.4} />
-        </mesh>
+        {/* Back and middle vertical white frames for the window column - only for x > 0! */}
+        {x > 0 && (
+          <group>
+            {/* Back vertical border/fin (Z = -buildingDepth/2) */}
+            <mesh position={[-0.37, panelY, -buildingDepth / 2]} rotation={[0, Math.PI / 2, 0]} castShadow>
+              <boxGeometry args={[0.08, panelHeight, 0.12]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.4} />
+            </mesh>
+            {/* Middle vertical frame (Z = 0) */}
+            <mesh position={[-0.34, panelY, 0]} rotation={[0, Math.PI / 2, 0]} castShadow>
+              <boxGeometry args={[0.04, panelHeight, 0.06]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.4} />
+            </mesh>
+          </group>
+        )}
 
-        {/* Vertical mullions & horizontal shelves for the window column (Z < 0) */}
-        {Array.from({ length: 11 }).map((_, f) => {
+        {/* Vertical mullions & horizontal shelves for the window column (Z < 0) - only for x > 0! */}
+        {x > 0 && Array.from({ length: 11 }).map((_, f) => {
           const localY = f * floorStep - 2.8
           if (localY < -2.8 || localY > 3.52) return null
           
@@ -517,7 +529,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
           return (
             <group key={`win-frame-floor-${f}`} position={[0, localY, 0]}>
               {/* Thick Projecting Floor Spandrel Shelf */}
-              <mesh position={[x > 0 ? -0.4 : 0.4, 0, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+              <mesh position={[-0.4, 0, -buildingDepth / 4]} rotation={[0, Math.PI / 2, 0]} castShadow receiveShadow>
                 <boxGeometry args={[buildingDepth / 2 - 0.02, 0.07, 0.18]} />
                 <meshStandardMaterial color="#ffffff" roughness={0.4} />
               </mesh>
@@ -526,7 +538,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
               {isTopFloor ? (
                 // Floor 11 (Top Floor): 4 vertical fins dividing the window into 5 narrow bays
                 [-0.172, -0.344, -0.516, -0.688].map((zVal, idx) => (
-                  <mesh key={`top-fin-${idx}`} position={[x > 0 ? -0.34 : 0.34, 0.28, zVal]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+                  <mesh key={`top-fin-${idx}`} position={[-0.34, 0.28, zVal]} rotation={[0, Math.PI / 2, 0]} castShadow>
                     <boxGeometry args={[0.035, floorStep - 0.07, 0.06]} />
                     <meshStandardMaterial color="#ffffff" roughness={0.4} />
                   </mesh>
@@ -534,7 +546,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
               ) : (
                 // Floors 3-10: 3 vertical mullions dividing the window into 4 bays
                 [-0.215, -0.43, -0.645].map((zVal, idx) => (
-                  <mesh key={`mullion-${idx}`} position={[x > 0 ? -0.33 : 0.33, 0.28, zVal]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+                  <mesh key={`mullion-${idx}`} position={[-0.33, 0.28, zVal]} rotation={[0, Math.PI / 2, 0]} castShadow>
                     <boxGeometry args={[0.02, floorStep - 0.07, 0.04]} />
                     <meshStandardMaterial color="#ffffff" roughness={0.4} />
                   </mesh>
@@ -543,7 +555,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
 
               {/* Thin horizontal window transoms (grid effect) */}
               {!isTopFloor && f < 10 && [-0.16, -0.32].map((offsetY, tIdx) => (
-                <mesh key={`transom-${tIdx}`} position={[x > 0 ? -0.322 : 0.322, offsetY + 0.28, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+                <mesh key={`transom-${tIdx}`} position={[-0.322, offsetY + 0.28, -buildingDepth / 4]} rotation={[0, Math.PI / 2, 0]} castShadow>
                   <boxGeometry args={[buildingDepth / 2 - 0.08, 0.015, 0.02]} />
                   <meshStandardMaterial color="#ffffff" roughness={0.4} />
                 </mesh>
