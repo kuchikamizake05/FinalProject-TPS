@@ -481,23 +481,23 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
       
-      {/* SIDE PANELS COVERING THE GAP (Z-SPLIT: LEFT SOLID BLUE, RIGHT SKY-BLUE WINDOWS) */}
+      {/* SIDE PANELS COVERING THE GAP (Z-SPLIT: FRONT SOLID BLUE, BACK SKY-BLUE WINDOWS) */}
       <group>
-        {/* 1. Left Side in View / Back Half (Z < 0): Solid Dark Blue Panel (No lines/slats as requested!) */}
-        <mesh position={[panelX, panelY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        {/* 1. Left Side in View / Front Half (Z > 0): Solid Dark Blue Panel (No lines/slats as requested!) */}
+        <mesh position={[panelX, panelY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
           <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
           <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
         </mesh>
 
-        {/* 2. Right Side in View / Front Half (Z > 0): Beautiful horizontal window column */}
+        {/* 2. Right Side in View / Back Half (Z < 0): Beautiful horizontal window column */}
         {/* Bright sky-blue reflective glass pane */}
-        <mesh position={[panelX, panelY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <mesh position={[panelX, panelY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
           <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
           <meshStandardMaterial color="#0ea5e9" roughness={0.05} metalness={0.9} transparent opacity={0.85} />
         </mesh>
 
-        {/* Front and middle vertical white frames for the window column */}
-        <mesh position={[frameX, panelY, buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+        {/* Back and middle vertical white frames for the window column */}
+        <mesh position={[frameX, panelY, -buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
           <boxGeometry args={[0.03, panelHeight, 0.03]} />
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
@@ -506,12 +506,12 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
 
-        {/* Horizontal frames & transoms for the window column (Z > 0) */}
+        {/* Horizontal frames & transoms for the window column (Z < 0) */}
         {Array.from({ length: 11 }).map((_, f) => {
           const localY = f * floorStep - 2.8
           if (localY < -2.8 || localY > 3.52) return null
           return (
-            <group key={`win-frame-floor-${f}`} position={[frameX + (x > 0 ? 0.001 : -0.001), localY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+            <group key={`win-frame-floor-${f}`} position={[frameX + (x > 0 ? 0.001 : -0.001), localY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
               {/* Floor divider */}
               <mesh castShadow>
                 <boxGeometry args={[buildingDepth / 2, 0.04, 0.03]} />
