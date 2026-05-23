@@ -463,6 +463,13 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
   const labelSide = x > 0 ? 0.34 : -0.34
   const labelRotation = x > 0 ? Math.PI / 2 : -Math.PI / 2
 
+  const thickness = 0.02
+  const innerFaceX = x > 0 ? -0.31 : 0.31
+  const blueX = innerFaceX + (x > 0 ? thickness / 2 : -thickness / 2)
+  const whiteX = innerFaceX - (x > 0 ? thickness / 2 : -thickness / 2)
+  const panelHeight = 6.39
+  const panelY = 0.395
+
   return (
     <group position={[x, 2.8, buildingCenterZ]}>
       {/* Main concrete column - split into stone-grey base (L1 & L2) and white upper structure */}
@@ -478,14 +485,14 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
       </mesh>
       
       {/* Exterior blue panel — covers side gap, visible from the outside */}
-      <mesh position={[x > 0 ? -0.30 : 0.30, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[buildingDepth, 6.93, 0.04]} />
+      <mesh position={[blueX, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
         <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
       </mesh>
 
       {/* Interior white panel — covers side gap, visible from the inside */}
-      <mesh position={[x > 0 ? -0.33 : 0.33, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[buildingDepth, 6.93, 0.04]} />
+      <mesh position={[whiteX, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
         <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
 
