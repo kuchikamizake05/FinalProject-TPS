@@ -208,7 +208,7 @@ function BackFacadeDetails() {
         )
       })}
 
-      {/* 2. Continuous Blue Glass Facade for center window bays (Bays 2, 3, 4) - Floors 2 to 10 (skip f = 0 for open ground floor) */}
+      {/* 2. Continuous Dark Reflective Glass Facade for center window bays (Bays 2, 3, 4) - Floors 2 to 10 (skip f = 0 for open ground floor) */}
       <group position={[0, 0, -0.035]}>
         {Array.from({ length: 10 }).map((_, f) => {
           if (f === 0) return null
@@ -222,11 +222,11 @@ function BackFacadeDetails() {
                   <mesh castShadow receiveShadow>
                     <boxGeometry args={[1.5, 0.48, 0.02]} />
                     <meshStandardMaterial 
-                      color="#ffffff" 
-                      roughness={0.2} 
-                      metalness={0.1} 
+                      color="#101e30" 
+                      roughness={0.1} 
+                      metalness={0.8} 
                       transparent 
-                      opacity={0.3} 
+                      opacity={0.88} 
                     />
                   </mesh>
                   {/* Detailed structural white window frame grid: 2 vertical mullions, 1 horizontal transom */}
@@ -258,56 +258,55 @@ function BackFacadeDetails() {
         })}
       </group>
 
-      {/* 3. Outer white panel bays with horizontal siding slats and small windows (Bays 1 and 5 at x = -3.2 and 3.2, skip f = 0 for open ground floor) */}
+      {/* 3. Outer white panel bays with horizontal louvre windows (Bays 1 and 5 at x = -3.2 and 3.2, skip f = 0 for open ground floor) */}
       {[-3.2, 3.2].map((xOffset) => (
         <group key={`outer-bay-${xOffset}`} position={[xOffset, 0, -0.035]}>
           {Array.from({ length: 10 }).map((_, f) => {
             if (f === 0) return null
             const y = f * floorStep - 3.1 + 0.28
+            
             return (
               <group key={`outer-panel-f-${f}`} position={[0, y, 0]}>
-                {/* White Background Panel */}
+                {/* Dark Glass Background Pane */}
                 <mesh castShadow receiveShadow>
-                  <boxGeometry args={[1.5, 0.48, 0.02]} />
-                  <meshStandardMaterial color="#ffffff" roughness={0.45} />
+                  <boxGeometry args={[1.5, 0.48, 0.01]} />
+                  <meshStandardMaterial 
+                    color="#101e30" 
+                    roughness={0.1} 
+                    metalness={0.8} 
+                    transparent 
+                    opacity={0.88} 
+                  />
                 </mesh>
                 
-                {/* 4 horizontal thin lines/slats across the white panel for realistic siding texture */}
-                {Array.from({ length: 4 }).map((_, s) => {
-                  const slatLocalY = (s - 1.5) * 0.11
-                  return (
-                    <mesh key={`siding-slat-${s}`} position={[0, slatLocalY, 0.011]} castShadow>
-                      <boxGeometry args={[1.5, 0.014, 0.008]} />
-                      <meshStandardMaterial color="#d1d5db" roughness={0.5} />
-                    </mesh>
-                  )
-                })}
+                {/* Outer White Border Frame */}
+                {/* Top Border */}
+                <mesh position={[0, 0.225, 0.012]} castShadow>
+                  <boxGeometry args={[1.5, 0.03, 0.02]} />
+                  <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                </mesh>
+                {/* Bottom Border */}
+                <mesh position={[0, -0.225, 0.012]} castShadow>
+                  <boxGeometry args={[1.5, 0.03, 0.02]} />
+                  <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                </mesh>
+                {/* Left Border */}
+                <mesh position={[-0.735, 0, 0.012]} castShadow>
+                  <boxGeometry args={[0.03, 0.48, 0.02]} />
+                  <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                </mesh>
+                {/* Right Border */}
+                <mesh position={[0.735, 0, 0.012]} castShadow>
+                  <boxGeometry args={[0.03, 0.48, 0.02]} />
+                  <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                </mesh>
 
-                {/* Small detailed window openings (two windows per panel for more glass area) */}
-                {[-0.38, 0.38].map((winLocalX, wIdx) => (
-                  <group key={`win-${wIdx}`} position={[winLocalX, 0, 0.012]}>
-                    {/* Small Glass Window */}
-                    <mesh castShadow receiveShadow>
-                      <boxGeometry args={[0.48, 0.34, 0.015]} />
-                      <meshStandardMaterial 
-                        color="#ffffff" 
-                        roughness={0.2} 
-                        metalness={0.1} 
-                        transparent 
-                        opacity={0.3} 
-                      />
-                    </mesh>
-                    {/* Small Window White Frame */}
-                    <mesh position={[0, 0, 0.002]} receiveShadow>
-                      <boxGeometry args={[0.52, 0.38, 0.01]} />
-                      <meshStandardMaterial color="#ffffff" roughness={0.35} />
-                    </mesh>
-                    {/* Small Window Inner Dark Frame */}
-                    <mesh position={[0, 0, 0.005]}>
-                      <boxGeometry args={[0.49, 0.35, 0.008]} />
-                      <meshStandardMaterial color="#4b5563" roughness={0.5} />
-                    </mesh>
-                  </group>
+                {/* Horizontal Louvre transoms inside the window bay (creating 3 dark glass slats) */}
+                {[-0.08, 0.08].map((ly, lIdx) => (
+                  <mesh key={`louvre-${lIdx}`} position={[0, ly, 0.014]} castShadow>
+                    <boxGeometry args={[1.44, 0.02, 0.015]} />
+                    <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                  </mesh>
                 ))}
               </group>
             )
