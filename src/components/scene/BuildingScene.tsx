@@ -468,6 +468,8 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
   const panelHeight = 6.32
   const panelY = 0.36
 
+  const isLeftColumn = x < 0
+
   return (
     <group position={[x, 2.8, buildingCenterZ]}>
       {/* Main concrete column - split into stone-grey base (L1 & L2) and white upper structure */}
@@ -482,17 +484,78 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
       
-      {/* Exterior blue panel — covers side gap, visible from the outside */}
-      <mesh position={[blueX, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
-        <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
-      </mesh>
+      {/* SIDE PANELS COVERING THE GAP */}
+      {isLeftColumn ? (
+        <group>
+          {/* Left Column: Exterior blue panel with dense horizontal louvre slats */}
+          <mesh position={[blueX, panelY, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
+            <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
+          </mesh>
+          
+          {/* Dense horizontal louvre slats overlay */}
+          {Array.from({ length: 80 }).map((_, sIdx) => {
+            const slatLocalY = (sIdx / 79) * panelHeight - (panelHeight / 2) + panelY
+            return (
+              <mesh key={`side-slat-${sIdx}`} position={[blueX - 0.005, slatLocalY, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow>
+                <boxGeometry args={[buildingDepth + 0.01, 0.018, 0.015]} />
+                <meshStandardMaterial color="#172554" roughness={0.4} />
+              </mesh>
+            )
+          })}
 
-      {/* Interior white panel — covers side gap, visible from the inside */}
-      <mesh position={[whiteX, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
-      </mesh>
+          {/* Interior white panel */}
+          <mesh position={[whiteX, panelY, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
+          </mesh>
+        </group>
+      ) : (
+        <group>
+          {/* Right Column: Beautiful horizontal window column */}
+          {/* Dark blue glass pane */}
+          <mesh position={[blueX, panelY, 0]} rotation={[0, Math.PI / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
+            <meshStandardMaterial color="#1e3a8a" roughness={0.1} metalness={0.8} transparent opacity={0.85} />
+          </mesh>
+
+          {/* Front and back vertical white frames */}
+          {[-buildingDepth / 2, buildingDepth / 2].map((zVal, zIdx) => (
+            <mesh key={`win-frame-vert-${zIdx}`} position={[blueX - 0.005, panelY, zVal]} rotation={[0, Math.PI / 2, 0]} castShadow>
+              <boxGeometry args={[0.03, panelHeight, 0.03]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.4} />
+            </mesh>
+          ))}
+
+          {/* Horizontal frames at each floor level & horizontal transoms */}
+          {Array.from({ length: 11 }).map((_, f) => {
+            const localY = f * floorStep - 2.8
+            if (localY < -2.8 || localY > 3.52) return null
+            return (
+              <group key={`win-frame-floor-${f}`} position={[blueX - 0.006, localY, 0]} rotation={[0, Math.PI / 2, 0]}>
+                {/* Main floor divider frame */}
+                <mesh castShadow>
+                  <boxGeometry args={[buildingDepth, 0.04, 0.03]} />
+                  <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                </mesh>
+                {/* 2 thin horizontal window transoms inside this floor's glass window */}
+                {f < 10 && [-0.18, -0.36].map((offsetY, tIdx) => (
+                  <mesh key={`transom-${tIdx}`} position={[0, offsetY + 0.28, 0.005]} castShadow>
+                    <boxGeometry args={[buildingDepth - 0.04, 0.015, 0.02]} />
+                    <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                  </mesh>
+                ))}
+              </group>
+            )
+          })}
+
+          {/* Interior white panel */}
+          <mesh position={[whiteX, panelY, 0]} rotation={[0, Math.PI / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[buildingDepth, panelHeight, thickness]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
+          </mesh>
+        </group>
+      )}
 
       {/* Horizontal white accent bands (ribs) wrapping around the column at each floor level */}
       {Array.from({ length: 12 }).map((_, index) => {
