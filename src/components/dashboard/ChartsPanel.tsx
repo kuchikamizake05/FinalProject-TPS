@@ -21,16 +21,16 @@ export function ChartsPanel({ trends }: ChartsPanelProps) {
 
   return (
     <>
-      <div className="glass-panel-header" style={{ marginBottom: 16 }}>
+      <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <p className="glass-eyebrow">Analytics Trends</p>
-          <h2 className="glass-panel-title">Grafik Metrik</h2>
+          <p className="m-0 mb-1 text-[0.68rem] font-[650] tracking-wider uppercase text-accent-cyan/80">Analytics Trends</p>
+          <h2 className="m-0 font-claude-serif text-[1rem] leading-none font-[650] text-text-primary tracking-normal">Grafik Metrik</h2>
         </div>
       </div>
 
-      <div className="chart-box-glass">
+      <div className="w-full flex-1 min-h-0 bg-[#1c222b] rounded-2xl p-3 shadow-neu-inset border border-[#323c4c]/10">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
             <defs>
               <linearGradient id="gAvgWait" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3} />

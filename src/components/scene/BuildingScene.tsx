@@ -72,7 +72,7 @@ export function BuildingScene({ elevators, waitingQueues }: BuildingSceneProps) 
   const [zoomActions, setZoomActions] = useState<{ zoomIn: () => void; zoomOut: () => void } | null>(null)
 
   return (
-    <section className="scene-shell">
+    <section className="relative w-full h-full overflow-hidden border-none rounded-none bg-transparent shadow-none">
       <Canvas camera={{ position: [5.7, 5.35, 12.3], fov: 34 }} shadows>
         <color attach="background" args={['#d7e4ed']} />
         <ambientLight intensity={0.82} />
@@ -84,12 +84,22 @@ export function BuildingScene({ elevators, waitingQueues }: BuildingSceneProps) 
       </Canvas>
 
       {zoomActions && (
-        <div className="zoom-controls">
-          <button className="zoom-btn" onClick={zoomActions.zoomIn} aria-label="Zoom In">
-            <ZoomIn size={18} />
+        <div className="absolute bottom-5 right-5 flex flex-col gap-2 p-2 rounded-2xl bg-[#252c38] border border-[#323c4c]/25 shadow-neu-flat z-10 hover:shadow-neu-flat-hover transition-all duration-300">
+          <button
+            className="group w-9 h-9 rounded-xl flex items-center justify-center text-text-secondary hover:text-accent-cyan bg-[#252c38] shadow-neu-flat hover:shadow-neu-flat-hover active:shadow-neu-inset border border-[#323c4c]/15 hover:border-accent-cyan/30 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+            onClick={zoomActions.zoomIn}
+            aria-label="Zoom In"
+            title="Zoom In"
+          >
+            <ZoomIn size={18} className="transition-transform duration-200 group-hover:scale-110" />
           </button>
-          <button className="zoom-btn" onClick={zoomActions.zoomOut} aria-label="Zoom Out">
-            <ZoomOut size={18} />
+          <button
+            className="group w-9 h-9 rounded-xl flex items-center justify-center text-text-secondary hover:text-accent-cyan bg-[#252c38] shadow-neu-flat hover:shadow-neu-flat-hover active:shadow-neu-inset border border-[#323c4c]/15 hover:border-accent-cyan/30 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+            onClick={zoomActions.zoomOut}
+            aria-label="Zoom Out"
+            title="Zoom Out"
+          >
+            <ZoomOut size={18} className="transition-transform duration-200 group-hover:scale-110" />
           </button>
         </div>
       )}

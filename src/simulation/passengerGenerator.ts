@@ -7,45 +7,88 @@ const upperFloors = ALL_ACCESSIBLE_FLOORS.filter((floor) => floor !== 1)
 
 function pickTrip(seed: number, config: SimulationConfig) {
   if (config.scenario === 'morning') {
-    const picked = weightedPick(seed, [
-      { value: 4, weight: 12 },
-      { value: 5, weight: 18 },
-      { value: 6, weight: 12 },
-      { value: 7, weight: 10 },
-      { value: 8, weight: 10 },
-      { value: 9, weight: 12 },
-      { value: 10, weight: 10 },
-      { value: 11, weight: 8 },
-    ])
-    return { originFloor: 1, destinationFloor: picked.value, seed: picked.seed }
+    const roll = random(seed)
+    seed = roll.seed
+    if (roll.value < 0.90) {
+      // 90% chance: L1 to upper floors (Jam Masuk)
+      const picked = weightedPick(seed, [
+        { value: 4, weight: 12 },
+        { value: 5, weight: 18 },
+        { value: 6, weight: 12 },
+        { value: 7, weight: 10 },
+        { value: 8, weight: 10 },
+        { value: 9, weight: 12 },
+        { value: 10, weight: 10 },
+        { value: 11, weight: 8 },
+      ])
+      return { originFloor: 1, destinationFloor: picked.value, seed: picked.seed }
+    } else {
+      // 10% chance: upper floors to upper floors
+      const origin = weightedPick(
+        seed,
+        upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
+      )
+      const destination = weightedPick(
+        origin.seed,
+        upperFloors.filter((floor) => floor !== origin.value).map((floor) => ({ value: floor, weight: 10 })),
+      )
+      return { originFloor: origin.value, destinationFloor: destination.value, seed: destination.seed }
+    }
   }
 
   if (config.scenario === 'leaving') {
-    const origin = weightedPick(
-      seed,
-      upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
-    )
-    return { originFloor: origin.value, destinationFloor: 1, seed: origin.seed }
+    const roll = random(seed)
+    seed = roll.seed
+    if (roll.value < 0.90) {
+      // 90% chance: upper floors to L1 (Jam Pulang)
+      const origin = weightedPick(
+        seed,
+        upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
+      )
+      return { originFloor: origin.value, destinationFloor: 1, seed: origin.seed }
+    } else {
+      // 10% chance: upper floors to upper floors
+      const origin = weightedPick(
+        seed,
+        upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
+      )
+      const destination = weightedPick(
+        origin.seed,
+        upperFloors.filter((floor) => floor !== origin.value).map((floor) => ({ value: floor, weight: 10 })),
+      )
+      return { originFloor: origin.value, destinationFloor: destination.value, seed: destination.seed }
+    }
   }
 
   if (config.scenario === 'classChange') {
-    const origin = weightedPick(
-      seed,
-      upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
-    )
-    let destination = weightedPick(
-      origin.seed,
-      upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
-    )
-
-    if (destination.value === origin.value) {
-      destination = weightedPick(
-        destination.seed,
+    const roll = random(seed)
+    seed = roll.seed
+    if (roll.value < 0.40) {
+      // 40% chance: upper floors to L1 (Jam Makan Siang - pergi makan)
+      const origin = weightedPick(
+        seed,
+        upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
+      )
+      return { originFloor: origin.value, destinationFloor: 1, seed: origin.seed }
+    } else if (roll.value < 0.80) {
+      // 40% chance: L1 to upper floors (Jam Makan Siang - kembali dari makan)
+      const dest = weightedPick(
+        seed,
+        upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
+      )
+      return { originFloor: 1, destinationFloor: dest.value, seed: dest.seed }
+    } else {
+      // 20% chance: upper floors to upper floors (pergantian kelas)
+      const origin = weightedPick(
+        seed,
+        upperFloors.map((floor) => ({ value: floor, weight: floor === 5 ? 14 : 10 })),
+      )
+      const destination = weightedPick(
+        origin.seed,
         upperFloors.filter((floor) => floor !== origin.value).map((floor) => ({ value: floor, weight: 10 })),
       )
+      return { originFloor: origin.value, destinationFloor: destination.value, seed: destination.seed }
     }
-
-    return { originFloor: origin.value, destinationFloor: destination.value, seed: destination.seed }
   }
 
   const origin = weightedPick(seed, [
