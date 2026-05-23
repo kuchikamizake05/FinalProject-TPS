@@ -460,8 +460,8 @@ function TopCrown() {
 function SideColumn({ x, label }: { x: number; label?: string }) {
   const labelSide = x > 0 ? 0.34 : -0.34
   const labelRotation = x > 0 ? Math.PI / 2 : -Math.PI / 2
-  const thickness = 0.07
-  const panelX = x > 0 ? -0.325 : 0.325
+  const thickness = 0.01
+  const panelX = x > 0 ? -0.32 : 0.32
   const whiteX = x > 0 ? -0.36 : 0.36
   const panelHeight = 6.32
   const panelY = 0.36
