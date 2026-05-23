@@ -465,7 +465,6 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
   const whiteX = x > 0 ? -0.36 : 0.36
   const panelHeight = 6.32
   const panelY = 0.36
-  const frameX = panelX + (x > 0 ? 0.02 : -0.02)
 
   return (
     <group position={[x, 2.8, buildingCenterZ]}>
@@ -497,30 +496,55 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         </mesh>
 
         {/* Back and middle vertical white frames for the window column */}
-        <mesh position={[frameX, panelY, -buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
-          <boxGeometry args={[0.03, panelHeight, 0.03]} />
+        {/* Back vertical border/fin (Z = -buildingDepth/2) */}
+        <mesh position={[x > 0 ? -0.37 : 0.37, panelY, -buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+          <boxGeometry args={[0.08, panelHeight, 0.12]} />
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
-        <mesh position={[frameX, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
-          <boxGeometry args={[0.03, panelHeight, 0.03]} />
+        {/* Middle vertical frame (Z = 0) */}
+        <mesh position={[x > 0 ? -0.34 : 0.34, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+          <boxGeometry args={[0.04, panelHeight, 0.06]} />
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
 
-        {/* Horizontal frames & transoms for the window column (Z < 0) */}
+        {/* Vertical mullions & horizontal shelves for the window column (Z < 0) */}
         {Array.from({ length: 11 }).map((_, f) => {
           const localY = f * floorStep - 2.8
           if (localY < -2.8 || localY > 3.52) return null
+          
+          const isTopFloor = f === 10
+
           return (
-            <group key={`win-frame-floor-${f}`} position={[frameX + (x > 0 ? 0.001 : -0.001), localY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
-              {/* Floor divider */}
-              <mesh castShadow>
-                <boxGeometry args={[buildingDepth / 2, 0.04, 0.03]} />
+            <group key={`win-frame-floor-${f}`} position={[0, localY, 0]}>
+              {/* Thick Projecting Floor Spandrel Shelf */}
+              <mesh position={[x > 0 ? -0.4 : 0.4, 0, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+                <boxGeometry args={[buildingDepth / 2 - 0.02, 0.07, 0.18]} />
                 <meshStandardMaterial color="#ffffff" roughness={0.4} />
               </mesh>
-              {/* 2 thin horizontal window transoms */}
-              {f < 10 && [-0.18, -0.36].map((offsetY, tIdx) => (
-                <mesh key={`transom-${tIdx}`} position={[0, offsetY + 0.28, 0.005]} castShadow>
-                  <boxGeometry args={[buildingDepth / 2 - 0.04, 0.015, 0.02]} />
+
+              {/* Vertical Mullions / Fins */}
+              {isTopFloor ? (
+                // Floor 11 (Top Floor): 4 vertical fins dividing the window into 5 narrow bays
+                [-0.172, -0.344, -0.516, -0.688].map((zVal, idx) => (
+                  <mesh key={`top-fin-${idx}`} position={[x > 0 ? -0.34 : 0.34, 0.28, zVal]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+                    <boxGeometry args={[0.035, floorStep - 0.07, 0.06]} />
+                    <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                  </mesh>
+                ))
+              ) : (
+                // Floors 3-10: 3 vertical mullions dividing the window into 4 bays
+                [-0.215, -0.43, -0.645].map((zVal, idx) => (
+                  <mesh key={`mullion-${idx}`} position={[x > 0 ? -0.33 : 0.33, 0.28, zVal]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+                    <boxGeometry args={[0.02, floorStep - 0.07, 0.04]} />
+                    <meshStandardMaterial color="#ffffff" roughness={0.4} />
+                  </mesh>
+                ))
+              )}
+
+              {/* Thin horizontal window transoms (grid effect) */}
+              {!isTopFloor && f < 10 && [-0.16, -0.32].map((offsetY, tIdx) => (
+                <mesh key={`transom-${tIdx}`} position={[x > 0 ? -0.322 : 0.322, offsetY + 0.28, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+                  <boxGeometry args={[buildingDepth / 2 - 0.08, 0.015, 0.02]} />
                   <meshStandardMaterial color="#ffffff" roughness={0.4} />
                 </mesh>
               ))}
@@ -543,7 +567,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
 
         return (
           <mesh key={index} position={[x > 0 ? 0.02 : -0.02, localY, 0]} castShadow receiveShadow>
-            <boxGeometry args={[0.66, 0.042, buildingDepth * 0.72 + 0.04]} />
+            <boxGeometry args={[0.66, 0.07, buildingDepth * 0.72 + 0.06]} />
             <meshStandardMaterial color="#ffffff" roughness={0.4} />
           </mesh>
         )
