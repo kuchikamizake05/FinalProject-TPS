@@ -23,7 +23,8 @@ const sideColumnX = 4.74
 const simulationRenderOrder = 10
 const elevatorRenderOrder = 24
 const passengerRenderOrder = 1000
-const passengerColor = '#ef4444'
+const waitingPassengerColor = '#f59e0b'
+const onboardPassengerColor = '#60a5fa'
 
 type ShaftLayout = { x: number; z: number; queueX: number; queueZ: number; color: string }
 
@@ -794,26 +795,84 @@ function PassengerLoadDots({ elevator }: { elevator: Elevator }) {
   return (
     <group position={[-0.22, -0.07, 0.39]} renderOrder={passengerRenderOrder}>
       {Array.from({ length: Math.min(passengerCount, 6) }, (_, index) => (
-        <PassengerDot key={index} position={[(index % 4) * 0.15, Math.floor(index / 4) * 0.135, 0]} size={0.09} />
+        <PassengerAvatar
+          key={index}
+          color={onboardPassengerColor}
+          position={[(index % 4) * 0.15, Math.floor(index / 4) * 0.135, 0]}
+          size={0.09}
+        />
       ))}
     </group>
   )
 }
 
-function PassengerDot({ position, size }: { position: [number, number, number]; size: number }) {
+function PassengerAvatar({
+  color,
+  position,
+  size,
+}: {
+  color: string
+  position: [number, number, number]
+  size: number
+}) {
   return (
     <Billboard position={position} renderOrder={passengerRenderOrder}>
       <group>
-        {/* Torso */}
-        <mesh renderOrder={passengerRenderOrder} position={[0, -size * 0.15, 0]} frustumCulled={false}>
-          <circleGeometry args={[size * 0.68, 10, 0, Math.PI]} />
-          <meshBasicMaterial color={passengerColor} transparent opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
+        <mesh renderOrder={passengerRenderOrder - 1} position={[0, -size * 0.62, -0.01]} frustumCulled={false}>
+          <circleGeometry args={[size * 0.58, 14]} />
+          <meshBasicMaterial color="#111827" transparent opacity={0.28} depthTest={false} depthWrite={false} toneMapped={false} />
         </mesh>
-        {/* Head */}
-        <mesh renderOrder={passengerRenderOrder} position={[0, size * 0.58, 0]} frustumCulled={false}>
-          <circleGeometry args={[size * 0.42, 10]} />
-          <meshBasicMaterial color={passengerColor} transparent opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
+        <mesh renderOrder={passengerRenderOrder} position={[0, -size * 0.12, 0]} frustumCulled={false}>
+          <circleGeometry args={[size * 0.56, 14, Math.PI, Math.PI]} />
+          <meshBasicMaterial color={color} transparent opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
         </mesh>
+        <mesh renderOrder={passengerRenderOrder + 1} position={[0, size * 0.56, 0]} frustumCulled={false}>
+          <circleGeometry args={[size * 0.38, 14]} />
+          <meshBasicMaterial color={color} transparent opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
+        </mesh>
+        <mesh renderOrder={passengerRenderOrder + 1} position={[-size * 0.26, -size * 0.6, 0]} frustumCulled={false}>
+          <boxGeometry args={[size * 0.18, size * 0.34, 0.01]} />
+          <meshBasicMaterial color={color} transparent opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
+        </mesh>
+        <mesh renderOrder={passengerRenderOrder + 1} position={[size * 0.26, -size * 0.6, 0]} frustumCulled={false}>
+          <boxGeometry args={[size * 0.18, size * 0.34, 0.01]} />
+          <meshBasicMaterial color={color} transparent opacity={1} depthTest={false} depthWrite={false} toneMapped={false} />
+        </mesh>
+      </group>
+    </Billboard>
+  )
+}
+
+function QueueCountBadge({
+  count,
+  position,
+}: {
+  count: number
+  position: [number, number, number]
+}) {
+  const label = String(count)
+  const badgeWidth = Math.max(0.24, label.length * 0.085 + 0.12)
+
+  return (
+    <Billboard position={position} renderOrder={passengerRenderOrder + 8}>
+      <group>
+        <mesh renderOrder={passengerRenderOrder + 8}>
+          <boxGeometry args={[badgeWidth, 0.18, 0.025]} />
+          <meshBasicMaterial color="#111827" transparent opacity={0.9} depthTest={false} depthWrite={false} toneMapped={false} />
+        </mesh>
+        <Text
+          position={[0, -0.006, 0.02]}
+          fontSize={0.125}
+          fontWeight="bold"
+          color="#f8fafc"
+          anchorX="center"
+          anchorY="middle"
+          renderOrder={passengerRenderOrder + 9}
+          material-depthTest={false}
+          material-depthWrite={false}
+        >
+          {label}
+        </Text>
       </group>
     </Billboard>
   )
@@ -836,28 +895,29 @@ function QueueDots({
   return (
     <group>
       {Object.entries(byFloor).map(([floor, count]) => {
-        const isLeftQueue = elevator.id === 'WN' || elevator.id === 'EN'
-        const labelX = isLeftQueue ? -0.2 : 0.8
-        const labelAnchor = isLeftQueue ? 'right' : 'left'
+        const isNorthQueue = elevator.id.endsWith('N')
+        const visiblePassengers = Math.min(count, 5)
+        const passengerSpacing = 0.16
+        const queueWidth = (visiblePassengers - 1) * passengerSpacing
+        const queueShiftX = isNorthQueue ? -0.16 : 0.64
+        const badgeX = isNorthQueue ? -0.44 : queueShiftX + 0.32
+        const queueY = 0.095
 
         return (
           <group key={`${elevator.id}-${floor}`} position={[layout.queueX, slabY(Number(floor) - 1), layout.queueZ]}>
-            {Array.from({ length: Math.min(count, 6) }, (_, index) => (
-              <PassengerDot key={index} position={[(index % 4) * 0.2, Math.floor(index / 4) * 0.18, 0]} size={0.09} />
+            {Array.from({ length: visiblePassengers }, (_, index) => (
+              <PassengerAvatar
+                key={index}
+                color={waitingPassengerColor}
+                position={[queueShiftX + (isNorthQueue ? index * passengerSpacing : index * passengerSpacing - queueWidth), queueY, 0]}
+                size={0.095}
+              />
             ))}
             {count ? (
-              <Text
-                position={[labelX, 0.11, 0.02]}
-                fontSize={0.20}
-                fontWeight="bold"
-                color={passengerColor}
-                anchorX={labelAnchor}
-                renderOrder={passengerRenderOrder}
-                material-depthTest={false}
-                material-depthWrite={false}
-              >
-                x{count}
-              </Text>
+              <QueueCountBadge
+                count={count}
+                position={[badgeX, queueY, 0.02]}
+              />
             ) : null}
           </group>
         )
