@@ -467,8 +467,8 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
   const innerFaceX = x > 0 ? -0.31 : 0.31
   const blueX = innerFaceX + (x > 0 ? thickness / 2 : -thickness / 2)
   const whiteX = innerFaceX - (x > 0 ? thickness / 2 : -thickness / 2)
-  const panelHeight = 6.39
-  const panelY = 0.395
+  const panelHeight = 6.32
+  const panelY = 0.36
 
   return (
     <group position={[x, 2.8, buildingCenterZ]}>
