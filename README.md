@@ -77,16 +77,3 @@ FinalProject-TPS/
 ├── package.json
 └── vite.config.ts
 ```
-
----
-
-## ⚙️ Prinsip Desain Neumorphism (Soft UI)
-Tema ini bergantung pada keselarasan warna latar belakang dan bayangan untuk menciptakan ilusi timbul dan cekung:
-- **Timbul (Extruded Flat)**: `shadow-neu-flat` menggambarkan tombol/kartu fisik yang melayang.
-- **Cekung (Inset Well)**: `shadow-neu-inset` menggambarkan panel layar, grafik, dropdown, dan tombol yang sedang ditekan.
-- **Warna Dasar**: `#252c38` (Base Slate) dan `#1c222b` (Recessed Slate).
-
----
-
-## 📝 Lisensi
-Proyek ini dibuat sebagai bagian dari Tugas Akhir mata kuliah **Teknologi Penjadwalan & Simulasi (TPS)**, Departemen Teknik Elektro & Teknologi Informasi, Fakultas Teknik, Universitas Gadjah Mada.
