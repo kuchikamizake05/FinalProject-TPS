@@ -4,7 +4,7 @@ export type Direction = 'up' | 'down' | 'idle'
 export type ElevatorStatus = 'idle' | 'moving' | 'boarding'
 export type PassengerStatus = 'waiting' | 'riding' | 'completed'
 export type Scenario = 'normal' | 'morning' | 'classChange' | 'leaving'
-export type DispatchStrategy = 'nearest' | 'roundRobin'
+export type DispatchStrategy = 'nearest' | 'roundRobin' | 'collective'
 export type SimulationMode = 'idle' | 'running' | 'paused' | 'finished'
 
 export interface Elevator {

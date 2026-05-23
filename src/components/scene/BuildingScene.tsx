@@ -660,6 +660,21 @@ function FloorServiceMarker({ floor, layout }: { floor: number; layout: ShaftLay
 
 function ElevatorCar({ elevator, layout }: { elevator: Elevator; layout: ShaftLayout }) {
   const passengerCount = elevator.passengers.reduce((sum, passenger) => sum + passenger.groupSize, 0)
+  const leftDoorRef = useRef<any>(null)
+  const rightDoorRef = useRef<any>(null)
+
+  const isDoorOpen = elevator.status === 'boarding' || (elevator.status === 'idle' && Math.round(elevator.currentFloor) === 1)
+
+  useFrame((_state, delta) => {
+    if (leftDoorRef.current && rightDoorRef.current) {
+      const targetOffset = isDoorOpen ? 0.18 : 0.0
+      const targetLeftX = -0.115 - targetOffset
+      const targetRightX = 0.115 + targetOffset
+      const speed = 10
+      leftDoorRef.current.position.x += (targetLeftX - leftDoorRef.current.position.x) * Math.min(1, delta * speed)
+      rightDoorRef.current.position.x += (targetRightX - rightDoorRef.current.position.x) * Math.min(1, delta * speed)
+    }
+  })
 
   return (
     <group position={[layout.x, floorY(elevator.currentFloor), layout.z + 0.3]} renderOrder={elevatorRenderOrder}>
@@ -668,9 +683,16 @@ function ElevatorCar({ elevator, layout }: { elevator: Elevator; layout: ShaftLa
         <boxGeometry args={[0.58, 0.5, 0.52]} />
         <meshStandardMaterial color="#2563eb" metalness={0.3} roughness={0.2} />
       </mesh>
-      {/* Door Panel */}
-      <mesh position={[0, 0, 0.265]} renderOrder={elevatorRenderOrder + 1}>
-        <boxGeometry args={[0.46, 0.36, 0.045]} />
+      
+      {/* Animated Left Door Panel */}
+      <mesh ref={leftDoorRef} position={[-0.115, 0, 0.265]} renderOrder={elevatorRenderOrder + 1}>
+        <boxGeometry args={[0.23, 0.36, 0.045]} />
+        <meshStandardMaterial color="#ffffff" metalness={0.2} roughness={0.15} />
+      </mesh>
+
+      {/* Animated Right Door Panel */}
+      <mesh ref={rightDoorRef} position={[0.115, 0, 0.265]} renderOrder={elevatorRenderOrder + 1}>
+        <boxGeometry args={[0.23, 0.36, 0.045]} />
         <meshStandardMaterial color="#ffffff" metalness={0.2} roughness={0.15} />
       </mesh>
 

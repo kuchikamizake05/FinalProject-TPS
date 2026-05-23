@@ -30,4 +30,5 @@ export const SCENARIO_LABELS = {
 export const DISPATCH_LABELS = {
   nearest: 'Nearest valid elevator',
   roundRobin: 'Round robin',
+  collective: 'Look-Ahead (Collective)',
 }

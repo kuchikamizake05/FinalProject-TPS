@@ -65,6 +65,37 @@ export function chooseElevatorForTrip(
     }
   }
 
+  if (config.dispatchStrategy === 'collective') {
+    const isUp = destinationFloor > originFloor
+    const selected = validElevators
+      .map((elevator) => {
+        let score = 0
+        const isMovingSameDirection = elevator.direction === (isUp ? 'up' : 'down')
+        const isIdle = elevator.direction === 'idle'
+        const isBeforePassenger = isUp 
+          ? elevator.currentFloor <= originFloor 
+          : elevator.currentFloor >= originFloor
+
+        if (isMovingSameDirection && isBeforePassenger) {
+          score = Math.abs(elevator.currentFloor - originFloor)
+        } else if (isIdle) {
+          score = Math.abs(elevator.currentFloor - originFloor) + 4
+        } else {
+          score = Math.abs(elevator.currentFloor - originFloor) + 12
+        }
+
+        score += (state.waitingQueues[elevator.id]?.length ?? 0) * 1.5
+        return { elevator, score }
+      })
+      .sort((a, b) => a.score - b.score)[0].elevator
+
+    return {
+      assignedBank,
+      assignedElevatorId: selected.id,
+      roundRobinCursor: state.roundRobinCursor,
+    }
+  }
+
   const selected = validElevators
     .map((elevator) => ({
       elevator,
