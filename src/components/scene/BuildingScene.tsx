@@ -477,9 +477,9 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
       
-      {/* Exterior blue panel — covers side gap, exterior facing only */}
+      {/* Exterior blue panel — covers side gap, visible from both sides */}
       <mesh position={[x > 0 ? -0.315 : 0.315, 0.275, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
-        <planeGeometry args={[buildingDepth, 6.0]} />
+        <boxGeometry args={[buildingDepth, 6.0, 0.02]} />
         <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
       </mesh>
 
