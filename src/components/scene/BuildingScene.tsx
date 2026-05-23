@@ -374,54 +374,16 @@ function FloorSlabs() {
         return (
         <group key={index} position={[0, y, buildingCenterZ]}>
           {/* Main slab */}
-          {isFloor1 ? (
-            <group>
-              {/* Left Wing (West Bank Support) */}
-              <mesh position={[-2.78, 0, 0]} receiveShadow>
-                <boxGeometry args={[3.16, 0.04, buildingDepth * 0.94]} />
-                <meshStandardMaterial 
-                  color="#eef3f6" 
-                  roughness={0.5} 
-                  transparent 
-                  opacity={0.88} 
-                  depthWrite 
-                />
-              </mesh>
-              {/* Right Wing (East Bank Support) */}
-              <mesh position={[2.78, 0, 0]} receiveShadow>
-                <boxGeometry args={[3.16, 0.04, buildingDepth * 0.94]} />
-                <meshStandardMaterial 
-                  color="#eef3f6" 
-                  roughness={0.5} 
-                  transparent 
-                  opacity={0.88} 
-                  depthWrite 
-                />
-              </mesh>
-              {/* Connecting Walkway at the back */}
-              <mesh position={[0, 0, -buildingDepth * 0.32]} receiveShadow>
-                <boxGeometry args={[2.4, 0.04, buildingDepth * 0.3]} />
-                <meshStandardMaterial 
-                  color="#eef3f6" 
-                  roughness={0.5} 
-                  transparent 
-                  opacity={0.88} 
-                  depthWrite 
-                />
-              </mesh>
-            </group>
-          ) : (
-            <mesh receiveShadow>
-              <boxGeometry args={[8.72, 0.04, buildingDepth * 0.94]} />
-              <meshStandardMaterial 
-                color="#eef3f6" 
-                roughness={0.5} 
-                transparent={!isFloor1} 
-                opacity={isFloor1 ? 1 : 0.55} 
-                depthWrite={isFloor1} 
-              />
-            </mesh>
-          )}
+          <mesh receiveShadow>
+            <boxGeometry args={[8.72, 0.04, buildingDepth * 0.94]} />
+            <meshStandardMaterial 
+              color="#eef3f6" 
+              roughness={0.5} 
+              transparent={!isFloor1} 
+              opacity={isFloor1 ? 1 : 0.55} 
+              depthWrite={isFloor1} 
+            />
+          </mesh>
           {/* Front horizontal white band */}
           <mesh position={[0, 0.025, buildingFrontZ - buildingCenterZ + 0.03]}>
             <boxGeometry args={[8.72, 0.045, 0.045]} />
