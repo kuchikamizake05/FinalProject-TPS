@@ -264,9 +264,6 @@ function BackFacadeDetails() {
           {Array.from({ length: 10 }).map((_, f) => {
             if (f === 0) return null
             const y = f * floorStep - 3.1 + 0.28
-            const isLeftBay = xOffset < 0
-            const winLocalX = isLeftBay ? 0.38 : -0.38
-            
             return (
               <group key={`outer-panel-f-${f}`} position={[0, y, 0]}>
                 {/* White Background Panel */}
@@ -286,30 +283,32 @@ function BackFacadeDetails() {
                   )
                 })}
 
-                {/* Small detailed window opening */}
-                <group position={[winLocalX, 0, 0.012]}>
-                  {/* Small Glass Window */}
-                  <mesh castShadow receiveShadow>
-                    <boxGeometry args={[0.48, 0.34, 0.015]} />
-                    <meshStandardMaterial 
-                      color="#ffffff" 
-                      roughness={0.2} 
-                      metalness={0.1} 
-                      transparent 
-                      opacity={0.3} 
-                    />
-                  </mesh>
-                  {/* Small Window White Frame */}
-                  <mesh position={[0, 0, 0.002]} receiveShadow>
-                    <boxGeometry args={[0.52, 0.38, 0.01]} />
-                    <meshStandardMaterial color="#ffffff" roughness={0.35} />
-                  </mesh>
-                  {/* Small Window Inner Dark Frame */}
-                  <mesh position={[0, 0, 0.005]}>
-                    <boxGeometry args={[0.49, 0.35, 0.008]} />
-                    <meshStandardMaterial color="#4b5563" roughness={0.5} />
-                  </mesh>
-                </group>
+                {/* Small detailed window openings (two windows per panel for more glass area) */}
+                {[-0.38, 0.38].map((winLocalX, wIdx) => (
+                  <group key={`win-${wIdx}`} position={[winLocalX, 0, 0.012]}>
+                    {/* Small Glass Window */}
+                    <mesh castShadow receiveShadow>
+                      <boxGeometry args={[0.48, 0.34, 0.015]} />
+                      <meshStandardMaterial 
+                        color="#ffffff" 
+                        roughness={0.2} 
+                        metalness={0.1} 
+                        transparent 
+                        opacity={0.3} 
+                      />
+                    </mesh>
+                    {/* Small Window White Frame */}
+                    <mesh position={[0, 0, 0.002]} receiveShadow>
+                      <boxGeometry args={[0.52, 0.38, 0.01]} />
+                      <meshStandardMaterial color="#ffffff" roughness={0.35} />
+                    </mesh>
+                    {/* Small Window Inner Dark Frame */}
+                    <mesh position={[0, 0, 0.005]}>
+                      <boxGeometry args={[0.49, 0.35, 0.008]} />
+                      <meshStandardMaterial color="#4b5563" roughness={0.5} />
+                    </mesh>
+                  </group>
+                ))}
               </group>
             )
           })}
