@@ -12,7 +12,6 @@ Repositori ini berisi sistem simulasi dan visualisasi 3D real-time untuk pergera
   - **Jam Pulang**: Jam sibuk sore hari dengan 90% penumpang turun dari lantai atas menuju lantai 1 (L1).
 - **Analisis Kinerja Terintegrasi**: Visualisasi tren metrik statistik real-time (waktu tunggu rata-rata, panjang antrean aktif, total penumpang terlayani) menggunakan Recharts.
 - **Konfigurasi Parameter Fleksibel**: Kemampuan menyesuaikan parameter simulasi seperti *arrival rate*, kapasitas lift, waktu tempuh antar lantai, *boarding time*, *random seed*, serta pilihan algoritma dispatcher.
-- **Desain Antarmuka Teroptimasi**: Implementasi gaya visual Neumorphic dengan palet warna Steel Slate (#252c38) yang dirancang untuk kenyamanan visual jangka panjang dan kejelasan informasi metrik.
 
 ## Stack Teknologi
 
