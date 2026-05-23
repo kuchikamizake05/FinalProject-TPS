@@ -403,7 +403,7 @@ function FloorSlabs() {
 
 function TopCrown() {
   return (
-    <group position={[0, 10 * floorStep + 0.5, buildingCenterZ]}>
+    <group position={[0, 10 * floorStep + 0.55, buildingCenterZ]}>
       {/* Main slab */}
       <mesh position={[0, 0.15, 0]}>
         <boxGeometry args={[8.7, 0.18, buildingDepth]} />
