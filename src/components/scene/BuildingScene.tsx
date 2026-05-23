@@ -222,11 +222,11 @@ function BackFacadeDetails() {
                   <mesh castShadow receiveShadow>
                     <boxGeometry args={[1.5, 0.48, 0.02]} />
                     <meshStandardMaterial 
-                      color="#101e30" 
-                      roughness={0.1} 
-                      metalness={0.8} 
+                      color="#1e3a8a" 
+                      roughness={0.15} 
+                      metalness={0.7} 
                       transparent 
-                      opacity={0.88} 
+                      opacity={0.85} 
                     />
                   </mesh>
                   {/* Detailed structural white window frame grid: 2 vertical mullions, 1 horizontal transom */}
@@ -271,11 +271,11 @@ function BackFacadeDetails() {
                 <mesh castShadow receiveShadow>
                   <boxGeometry args={[1.5, 0.48, 0.01]} />
                   <meshStandardMaterial 
-                    color="#101e30" 
-                    roughness={0.1} 
-                    metalness={0.8} 
+                    color="#1e3a8a" 
+                    roughness={0.15} 
+                    metalness={0.7} 
                     transparent 
-                    opacity={0.88} 
+                    opacity={0.85} 
                   />
                 </mesh>
                 
