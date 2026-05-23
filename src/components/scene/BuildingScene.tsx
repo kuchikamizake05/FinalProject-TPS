@@ -462,11 +462,11 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
   const labelRotation = x > 0 ? Math.PI / 2 : -Math.PI / 2
 
   const thickness = 0.07
-  const innerFaceX = x > 0 ? -0.31 : 0.31
-  const blueX = innerFaceX + (x > 0 ? thickness / 2 : -thickness / 2)
-  const whiteX = innerFaceX - (x > 0 ? thickness / 2 : -thickness / 2)
+  const panelX = x > 0 ? -0.325 : 0.325
+  const whiteX = x > 0 ? -0.36 : 0.36
   const panelHeight = 6.32
   const panelY = 0.36
+  const frameX = panelX + (x > 0 ? 0.02 : -0.02)
 
   return (
     <group position={[x, 2.8, buildingCenterZ]}>
@@ -485,7 +485,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
       {/* SIDE PANELS COVERING THE GAP */}
       <group>
         {/* 1. Back Half (Z < 0): Blue panel with dense horizontal louvre slats */}
-        <mesh position={[blueX, panelY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <mesh position={[panelX, panelY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
           <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
           <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
         </mesh>
@@ -494,7 +494,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         {Array.from({ length: 80 }).map((_, sIdx) => {
           const slatLocalY = (sIdx / 79) * panelHeight - (panelHeight / 2) + panelY
           return (
-            <mesh key={`side-slat-${sIdx}`} position={[blueX + (x > 0 ? 0.005 : -0.005), slatLocalY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+            <mesh key={`side-slat-${sIdx}`} position={[frameX, slatLocalY, -buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
               <boxGeometry args={[buildingDepth / 2 + 0.01, 0.018, 0.015]} />
               <meshStandardMaterial color="#172554" roughness={0.4} />
             </mesh>
@@ -502,18 +502,18 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         })}
 
         {/* 2. Front Half (Z > 0): Beautiful horizontal window column */}
-        {/* Dark blue glass pane */}
-        <mesh position={[blueX, panelY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        {/* Bright sky-blue reflective glass pane */}
+        <mesh position={[panelX, panelY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
           <boxGeometry args={[buildingDepth / 2, panelHeight, thickness]} />
-          <meshStandardMaterial color="#1e3a8a" roughness={0.1} metalness={0.8} transparent opacity={0.85} />
+          <meshStandardMaterial color="#0ea5e9" roughness={0.05} metalness={0.9} transparent opacity={0.85} />
         </mesh>
 
         {/* Front and middle vertical white frames for the window column */}
-        <mesh position={[blueX + (x > 0 ? 0.005 : -0.005), panelY, buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+        <mesh position={[frameX, panelY, buildingDepth / 2]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
           <boxGeometry args={[0.03, panelHeight, 0.03]} />
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
-        <mesh position={[blueX + (x > 0 ? 0.005 : -0.005), panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
+        <mesh position={[frameX, panelY, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow>
           <boxGeometry args={[0.03, panelHeight, 0.03]} />
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
@@ -523,7 +523,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
           const localY = f * floorStep - 2.8
           if (localY < -2.8 || localY > 3.52) return null
           return (
-            <group key={`win-frame-floor-${f}`} position={[blueX + (x > 0 ? 0.006 : -0.006), localY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+            <group key={`win-frame-floor-${f}`} position={[frameX + (x > 0 ? 0.001 : -0.001), localY, buildingDepth / 4]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
               {/* Floor divider */}
               <mesh castShadow>
                 <boxGeometry args={[buildingDepth / 2, 0.04, 0.03]} />
