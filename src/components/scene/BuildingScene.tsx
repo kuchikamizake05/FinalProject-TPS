@@ -686,7 +686,7 @@ function ElevatorCar({ elevator, layout }: { elevator: Elevator; layout: ShaftLa
       
       {/* Dark Interior Background (visible when doors open) */}
       <mesh position={[0, 0, 0.258]} renderOrder={elevatorRenderOrder + 0.5}>
-        <boxGeometry args={[0.45, 0.35, 0.01]} />
+        <boxGeometry args={[0.56, 0.48, 0.01]} />
         <meshStandardMaterial color="#111827" roughness={0.8} />
       </mesh>
       
