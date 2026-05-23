@@ -463,7 +463,7 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
   const labelSide = x > 0 ? 0.34 : -0.34
   const labelRotation = x > 0 ? Math.PI / 2 : -Math.PI / 2
 
-  const thickness = 0.02
+  const thickness = 0.04
   const innerFaceX = x > 0 ? -0.31 : 0.31
   const blueX = innerFaceX + (x > 0 ? thickness / 2 : -thickness / 2)
   const whiteX = innerFaceX - (x > 0 ? thickness / 2 : -thickness / 2)
