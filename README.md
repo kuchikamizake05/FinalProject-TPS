@@ -54,11 +54,22 @@ Repositori ini berisi sistem simulasi dan visualisasi 3D real-time untuk pergera
 
 ## Struktur Direktori
 
-- `src/components/controls/`: Komponen pengaturan parameter dan preset skenario.
-- `src/components/dashboard/`: Panel grafik tren analitik dan kartu metrik kinerja simulasi.
-- `src/components/scene/`: Visualizer arsitektur 3D gedung SGLC dan animasi lift.
-- `src/simulation/`: Logika antrean penumpang, pemrosesan dispatcher, dan pembangkit stokastik.
-- `src/hooks/`: State management simulasi lift.
+```
+FinalProject-TPS/
+├── src/
+│   ├── components/
+│   │   ├── controls/       # Parameter Simulasi & Tombol Preset
+│   │   ├── dashboard/      # Live Metrics & Grafik Tren Recharts
+│   │   └── scene/          # Scene Arsitektur 3D Gedung SGLC & Lift
+│   ├── hooks/              # Custom Hook state mesin simulasi
+│   ├── simulation/         # Algoritma antrean & Generator trip stokastik
+│   ├── App.tsx             # Entry Shell Layout Utama
+│   ├── index.css           # Sistem desain bayangan Neumorphic
+│   └── main.tsx            # React DOM mounting
+├── package.json
+└── vite.config.ts
+```
 
 ## Lisensi & Hak Cipta
-Proyek ini dibuat sebagai bagian dari Tugas Akhir mata kuliah **Teknologi Penjadwalan & Simulasi (TPS)**, Departemen Teknik Elektro & Teknologi Informasi, Fakultas Teknik, Universitas Gadjah UGM.
+Proyek ini dibuat sebagai bagian dari Tugas Akhir mata kuliah **Teknologi Penjadwalan & Simulasi (TPS)**, Departemen Teknik Elektro & Teknologi Informasi, Fakultas Teknik, Universitas Gadjah Mada (UGM).
+
