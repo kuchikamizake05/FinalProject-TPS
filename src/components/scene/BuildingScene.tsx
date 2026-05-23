@@ -478,14 +478,14 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
       </mesh>
       
       {/* Exterior blue panel — covers side gap, visible from the outside */}
-      <mesh position={[x > 0 ? -0.309 : 0.309, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[buildingDepth, 6.93, 0.01]} />
+      <mesh position={[x > 0 ? -0.30 : 0.30, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[buildingDepth, 6.93, 0.04]} />
         <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
       </mesh>
 
       {/* Interior white panel — covers side gap, visible from the inside */}
-      <mesh position={[x > 0 ? -0.321 : 0.321, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[buildingDepth, 6.93, 0.01]} />
+      <mesh position={[x > 0 ? -0.33 : 0.33, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[buildingDepth, 6.93, 0.04]} />
         <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
 
