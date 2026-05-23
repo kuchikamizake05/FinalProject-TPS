@@ -159,9 +159,8 @@ export function stepSimulation(previous: SimulationState, config: SimulationConf
   const elevators = state.elevators.map((elevator) => {
     let currentElevator = { ...elevator }
 
-    // Algoritma Standby (Home Floor): Kembali ke Lantai 1 jika kosong & idle pada Jam Masuk Pagi
+    // Algoritma Standby (Home Floor): Kembali ke Lantai 1 jika kosong & idle pada semua kondisi
     if (
-      config.scenario === 'morning' &&
       currentElevator.targetFloors.length === 0 &&
       currentElevator.passengers.length === 0 &&
       (state.waitingQueues[currentElevator.id]?.length ?? 0) === 0 &&
