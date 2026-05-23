@@ -73,11 +73,11 @@ export function BuildingScene({ elevators, waitingQueues }: BuildingSceneProps) 
 
   return (
     <section className="relative w-full h-full overflow-hidden border-none rounded-none bg-transparent shadow-none">
-      <Canvas camera={{ position: [5.7, 5.35, 12.3], fov: 34 }} shadows>
+      <Canvas camera={{ position: [5.7, 5.35, 12.3], fov: 34 }}>
         <color attach="background" args={['#d7e4ed']} />
         <ambientLight intensity={0.82} />
-        <directionalLight position={[2.5, 8, 5]} intensity={1.25} castShadow />
-        <directionalLight position={[-4, 7, -9]} intensity={1.45} castShadow />
+        <directionalLight position={[2.5, 8, 5]} intensity={1.25} />
+        <directionalLight position={[-4, 7, -9]} intensity={1.45} />
         <SceneContent elevators={elevators} waitingQueues={waitingQueues} />
         <OrbitControls ref={controlsRef} enablePan={true} minDistance={5.8} maxDistance={18} maxPolarAngle={Math.PI / 2.08} />
         <ZoomController controlsRef={controlsRef} onRegister={setZoomActions} />
@@ -477,10 +477,16 @@ function SideColumn({ x, label }: { x: number; label?: string }) {
         <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
       
-      {/* Exterior blue panel — covers side gap, visible from both sides */}
-      <mesh position={[x > 0 ? -0.315 : 0.315, 0.275, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
-        <boxGeometry args={[buildingDepth, 6.0, 0.02]} />
+      {/* Exterior blue panel — covers side gap, visible from the outside */}
+      <mesh position={[x > 0 ? -0.309 : 0.309, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[buildingDepth, 6.93, 0.01]} />
         <meshStandardMaterial color="#1e3a8a" roughness={0.26} metalness={0.3} />
+      </mesh>
+
+      {/* Interior white panel — covers side gap, visible from the inside */}
+      <mesh position={[x > 0 ? -0.321 : 0.321, -0.015, 0]} rotation={[0, x > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[buildingDepth, 6.93, 0.01]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.48} metalness={0.1} />
       </mesh>
 
       {/* Horizontal white accent bands (ribs) wrapping around the column at each floor level */}
