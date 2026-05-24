@@ -1,7 +1,7 @@
 import { Billboard, OrbitControls, Text } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
-import { ZoomIn, ZoomOut } from 'lucide-react'
+import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react'
 import { Vector3 } from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import type { Elevator, Passenger } from '../../simulation/types'
@@ -25,6 +25,8 @@ const elevatorRenderOrder = 24
 const passengerRenderOrder = 1000
 const waitingPassengerColor = '#f59e0b'
 const onboardPassengerColor = '#60a5fa'
+const defaultCameraPosition: [number, number, number] = [5.7, 5.85, 13.4]
+const defaultCameraTarget: [number, number, number] = [0, 0, 0]
 
 type ShaftLayout = { x: number; z: number; queueX: number; queueZ: number; color: string }
 
@@ -37,17 +39,21 @@ const shaftLayout: Record<string, ShaftLayout> = {
 
 interface ZoomControllerProps {
   controlsRef: React.RefObject<OrbitControlsImpl | null>
-  onRegister: (actions: { zoomIn: () => void; zoomOut: () => void }) => void
+  onRegister: (actions: { zoomIn: () => void; zoomOut: () => void; resetCamera: () => void }) => void
 }
 
 function ZoomController({ controlsRef, onRegister }: ZoomControllerProps) {
   const { camera } = useThree()
 
   useEffect(() => {
-    const zoom = (factor: number) => {
+    const zoom = (factor: number, centerTarget = false) => {
       if (camera && controlsRef.current) {
         const controls = controlsRef.current
         const target = controls.target
+
+        if (centerTarget) {
+          target.set(...defaultCameraTarget)
+        }
 
         const dir = new Vector3().subVectors(camera.position, target)
         const newDist = dir.length() * factor
@@ -61,7 +67,12 @@ function ZoomController({ controlsRef, onRegister }: ZoomControllerProps) {
 
     onRegister({
       zoomIn: () => zoom(0.85),
-      zoomOut: () => zoom(1.15),
+      zoomOut: () => zoom(1.15, true),
+      resetCamera: () => {
+        camera.position.set(...defaultCameraPosition)
+        controlsRef.current?.target.set(...defaultCameraTarget)
+        controlsRef.current?.update()
+      },
     })
   }, [camera, controlsRef, onRegister])
 
@@ -70,17 +81,17 @@ function ZoomController({ controlsRef, onRegister }: ZoomControllerProps) {
 
 export function BuildingScene({ elevators, waitingQueues }: BuildingSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null)
-  const [zoomActions, setZoomActions] = useState<{ zoomIn: () => void; zoomOut: () => void } | null>(null)
+  const [zoomActions, setZoomActions] = useState<{ zoomIn: () => void; zoomOut: () => void; resetCamera: () => void } | null>(null)
 
   return (
     <section className="relative w-full h-full overflow-hidden border-none rounded-none bg-transparent shadow-none">
-      <Canvas camera={{ position: [5.7, 5.35, 12.3], fov: 34 }}>
+      <Canvas camera={{ position: defaultCameraPosition, fov: 34 }}>
         <color attach="background" args={['#d7e4ed']} />
         <ambientLight intensity={0.82} />
         <directionalLight position={[2.5, 8, 5]} intensity={1.25} />
         <directionalLight position={[-4, 7, -9]} intensity={1.45} />
         <SceneContent elevators={elevators} waitingQueues={waitingQueues} />
-        <OrbitControls ref={controlsRef} enablePan={true} minDistance={5.8} maxDistance={18} maxPolarAngle={Math.PI / 2.08} />
+        <OrbitControls ref={controlsRef} enablePan={true} zoomToCursor minDistance={5.8} maxDistance={18} maxPolarAngle={Math.PI / 2.08} />
         <ZoomController controlsRef={controlsRef} onRegister={setZoomActions} />
       </Canvas>
 
@@ -102,6 +113,14 @@ export function BuildingScene({ elevators, waitingQueues }: BuildingSceneProps) 
           >
             <ZoomOut size={18} className="transition-transform duration-200 group-hover:scale-110" />
           </button>
+          <button
+            className="group w-9 h-9 rounded-xl flex items-center justify-center text-text-secondary hover:text-accent-cyan bg-[#252c38] shadow-neu-flat hover:shadow-neu-flat-hover active:shadow-neu-inset border border-[#323c4c]/15 hover:border-accent-cyan/30 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+            onClick={zoomActions.resetCamera}
+            aria-label="Reset Camera"
+            title="Reset Camera"
+          >
+            <RotateCcw size={17} className="transition-transform duration-200 group-hover:scale-110" />
+          </button>
         </div>
       )}
     </section>
@@ -120,7 +139,7 @@ function SceneContent({ elevators, waitingQueues }: BuildingSceneProps) {
   })
 
   return (
-    <group position={[0, -3.05, 0]}>
+    <group position={[0, -3.25, 0]}>
       <SglcFacade shellOpacity={shellOpacity} />
       <FloorSlabs />
       <ElevatorSystem elevators={elevators} waitingQueues={waitingQueues} />
