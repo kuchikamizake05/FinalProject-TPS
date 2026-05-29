@@ -679,11 +679,9 @@ function ElevatorShaft({ elevator, layout }: { elevator: Elevator; layout: Shaft
         <boxGeometry args={[0.42, 6.2, 0.2]} />
         <meshStandardMaterial color="#132137" transparent opacity={0.92} metalness={0.2} roughness={0.35} depthWrite={false} />
       </mesh>
-      {elevator.servedFloors.map((floor) =>
-        floor === maxFloor ? null : (
-          <FloorServiceMarker key={`${elevator.id}-${floor}`} floor={floor} layout={layout} />
-        )
-      )}
+      {elevator.servedFloors.map((floor) => (
+        <FloorServiceMarker key={`${elevator.id}-${floor}`} floor={floor} layout={layout} />
+      ))}
       <Billboard position={[labelX, 11 * floorStep + 0.65, buildingFrontZ + 0.05]} renderOrder={simulationRenderOrder + 10}>
         <Text
           fontSize={0.23}
