@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Building2, Maximize2, Minimize2 } from 'lucide-react'
+import { Maximize2, Minimize2 } from 'lucide-react'
 import { ChartsPanel } from './components/dashboard/ChartsPanel'
 import { MetricsPanel } from './components/dashboard/MetricsPanel'
 import { ControlPanel } from './components/controls/ControlPanel'
@@ -39,7 +39,7 @@ function App() {
         
         <div className="flex items-center gap-3.5 min-w-0">
           <div className="grid w-[40px] h-[40px] border border-[#323c4c]/30 rounded-xl bg-[#252c38] shadow-neu-flat shrink-0 place-content-center hover:scale-105 transition-all duration-200 hover:shadow-neu-inset">
-            <Building2 size={20} className="text-accent-cyan animate-pulse" />
+            <img src="/favicon.svg" className="w-[22px] h-[22px] object-contain" alt="Logo" />
           </div>
           <div className="flex flex-col gap-px min-w-0">
             <span className="overflow-hidden max-w-[360px] text-[0.62rem] font-bold tracking-widest uppercase text-accent-cyan/80 text-ellipsis whitespace-nowrap">SGLC Elevator Stochastic Simulation</span>
